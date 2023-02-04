@@ -19,7 +19,7 @@
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
     "@commitlint/types": "^17.0.0",
-    "commitlint-config-gitmoji": "^2.2.5",
+    "commitlint-config-gitmoji": "^2.2.10",
     "eslint": "^8.22.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
