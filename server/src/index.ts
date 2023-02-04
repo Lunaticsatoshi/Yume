@@ -15,10 +15,10 @@ const ENV: string | number = process.env.NODE_ENV || 'development';
     // console.log("connected, running migrations now", dataSource);
     // await dataSource.runMigrations();
     // console.log("migrations ran");
+    app.listen(PORT, () =>
+      console.log(`server started on port ${PORT} in ${ENV} mode`),
+    );
   } catch (error) {
-    console.log("error", error);
+    console.log("error", error.message);
   }
-  app.listen(PORT, () =>
-    console.log(`server started on port ${PORT} in ${ENV} mode`),
-  );
 })();
