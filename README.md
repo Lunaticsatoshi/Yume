@@ -1,9 +1,9 @@
 <br />
 <p align="center">
-  <h3 align="center">Node yarn workspace template✔️</h3>
+  <h3 align="center">Reddit clone✔️</h3>
 
   <p align="center">
-    A simple and user friendly template for setting up a node project with yar workspace. This repo contains a express backend and a next js frontend
+    A full stack reddit clone built using the yarn workspace template. This repo contains a express backend and a next js frontend
     <br />
     <br />
     <a href="">View Demo</a>
