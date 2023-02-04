@@ -5,8 +5,8 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "akagi",
-      "kaguya"
+      "server",
+      "client"
     ],
     "nohoist": [
       "**"
