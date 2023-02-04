@@ -66,8 +66,8 @@
     "id-denylist": "error",
     "id-match": "error",
     "indent": [
-      "error",
-      2,
+      "off",
+      0,
       {
         "offsetTernaryExpressions": true,
         "SwitchCase": 1
