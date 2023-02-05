@@ -10,6 +10,6 @@ export const config = {
     entities: ['dist/entities/*.js'],
     migrations: ['dist/migrations/*.js'],
     synchronize: !__prod__,
-    logging: !__prod__,
+    logNotifications: !__prod__,
   },
 };
