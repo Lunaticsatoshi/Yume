@@ -1,6 +1,8 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
+import { ApolloProvider } from '@apollo/client';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { useApollo } from 'src/hooks';
 import initAuth from 'src/utils/initAuth';
 
 initAuth();
@@ -17,10 +19,17 @@ export const theme = extendTheme({
 });
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const { client } = useApollo(pageProps);
   return (
-    <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
-    </ChakraProvider>
+    <>
+      {client && (
+        <ApolloProvider client={client}>
+          <ChakraProvider theme={theme}>
+            <Component {...pageProps} />
+          </ChakraProvider>
+        </ApolloProvider>
+      )}
+    </>
   );
 }
 
