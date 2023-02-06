@@ -7,21 +7,16 @@ import {
   OneToMany,
   BeforeInsert,
 } from 'typeorm';
-import { Field } from 'type-graphql';
+import { Field, ObjectType } from 'type-graphql';
 
 import { makeId } from '../common/utils/random-data-generator';
 import BaseModel from './BaseModel';
 import { User } from './UserModel';
 import { Post } from './PostModel';
 import { Vote } from './VoteModel';
-
+@ObjectType()
 @Entity('comments')
 export class Comment extends BaseModel {
-  constructor(sub: Partial<Comment>) {
-    super();
-    Object.assign(this, sub);
-  }
-
   @Field()
   @Index()
   @Column()

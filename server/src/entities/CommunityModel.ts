@@ -6,19 +6,14 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { Field } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 
 import BaseModel from './BaseModel';
 import { User } from './UserModel';
 import { Post } from './PostModel';
-
+@ObjectType()
 @Entity('communities')
 export class Community extends BaseModel {
-  constructor(sub: Partial<Community>) {
-    super();
-    Object.assign(this, sub);
-  }
-
   @Field()
   @Index()
   @Column({ unique: true })

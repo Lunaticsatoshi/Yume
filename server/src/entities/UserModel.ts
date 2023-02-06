@@ -4,15 +4,11 @@ import { IsEmail, Length } from 'class-validator';
 import BaseModel from './BaseModel';
 import { Post } from './PostModel';
 import { Vote } from './VoteModel';
-import { Field } from 'type-graphql';
+import { Field, ObjectType } from 'type-graphql';
 
+@ObjectType()
 @Entity('users')
 export class User extends BaseModel {
-  constructor(user: Partial<User>) {
-    super();
-    Object.assign(this, user);
-  }
-
   @Field()
   @Column({ type: 'uuid', unique: true })
   @Index()
@@ -30,6 +26,9 @@ export class User extends BaseModel {
   @Length(3, 255, { message: 'Must be at least 3 characters long' })
   @Column({ unique: true })
   username: string;
+
+  @Column()
+  password: string;
 
   @Field()
   @Column()

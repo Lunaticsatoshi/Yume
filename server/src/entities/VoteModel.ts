@@ -4,7 +4,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Field, registerEnumType } from 'type-graphql';
+import { Field, ObjectType, registerEnumType } from 'type-graphql';
 
 import BaseModel from './BaseModel';
 import { User } from './UserModel';
@@ -20,14 +20,9 @@ registerEnumType(VOTE_TYPE, {
   name: 'voteType',
   description: 'Type of the vote',
 });
-
+@ObjectType()
 @Entity('votes')
 export class Vote extends BaseModel {
-  constructor(sub: Partial<Vote>) {
-    super();
-    Object.assign(this, sub);
-  }
-
   @Field(() => VOTE_TYPE)
   @Column({ type: "enum", default: VOTE_TYPE.UPVOTE, enum: VOTE_TYPE })
   voteType: VOTE_TYPE;

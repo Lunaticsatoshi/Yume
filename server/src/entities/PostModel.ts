@@ -7,7 +7,7 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { Field } from 'type-graphql';
+import { Field, ObjectType } from 'type-graphql';
 
 import { makeId, slugify } from '../common/utils/random-data-generator';
 import BaseModel from './BaseModel';
@@ -15,14 +15,9 @@ import { User } from './UserModel';
 import { Community } from './CommunityModel';
 import { Comment } from './CommentModel';
 import { Vote } from './VoteModel';
-
+@ObjectType()
 @Entity('posts')
 export class Post extends BaseModel {
-  constructor(post: Partial<Post>) {
-    super();
-    Object.assign(this, post);
-  }
-
   @Field()
   @Index()
   @Column()

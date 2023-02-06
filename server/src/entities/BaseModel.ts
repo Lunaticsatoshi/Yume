@@ -4,12 +4,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { instanceToPlain, Exclude } from 'class-transformer';
+import { instanceToPlain } from 'class-transformer';
 
 export default abstract class BaseModel extends BaseEntity {
-  @Exclude()
   @PrimaryGeneratedColumn()
-  invoiceFieldKey?: string;
+  id: number;
 
   @CreateDateColumn()
   createdAt: Date;
