@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.7",
     "@chakra-ui/react": "^2.4.9",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
@@ -17,13 +18,16 @@
     "firebase-admin": "^11.5.0",
     "framer-motion": "^9.0.1",
     "next": "12.2.5",
-    "next-firebase-auth": "^0.15.0",
+    "next-firebase-auth": "^1.0.0-canary.2",
+    "phosphor-react": "^1.4.1",
     "postcss": "^8.4.21",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.43.0",
     "tailwindcss": "^3.2.4"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^3.0.0",
     "@types/node": "18.7.3",
     "@types/react": "18.0.17",
     "@types/react-dom": "18.0.6",

@@ -1,20 +1,9 @@
-import { FormEvent, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { withAuthUser, AuthAction } from 'next-firebase-auth';
+import { LoginForm } from 'src/container';
 
-import { InputField } from 'src/components';
-
-
-export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<any>({});
-
-
-//   const router = useRouter();
-//   if (authenticated) router.push('/');
-
+function Login() {
   return (
     <div className="flex bg-white">
       <Head>
@@ -28,35 +17,15 @@ export default function Login() {
         }}
       ></div>
       <div className="flex flex-col justify-center pl-6">
-        <div className="w-70">
-          <h1 className="mb-2 text-lg font-medium">Login</h1>
-          <p className="mb-10 text-xs">
-            By continuing, you agree to our User Agreement and Privacy Policy
-          </p>
-          <form onSubmit={() => {}}>
-            <InputField
-              className="mb-2"
-              type="text"
-              value={username}
-              setValue={setUsername}
-              placeholder="USERNAME"
-              error={errors.username}
-            />
-            <InputField
-              className="mb-4"
-              type="password"
-              value={password}
-              setValue={setPassword}
-              placeholder="PASSWORD"
-              error={errors.password}
-            />
-
-            <button className="w-full py-2 mb-4 text-xs font-bold text-white uppercase bg-blue-500 border border-blue-500 rounded">
-              Login
-            </button>
-          </form>
+        <div className="w-80">
+          <h1 className="mb-2 text-lg font-bold">Login</h1>
+          <LoginForm
+            message={
+              'By continuing, you agree to our User Agreement and Privacy Policy'
+            }
+          />
           <small>
-            New to Readit?
+            New to Reddit?
             <Link href="/register">
               <a className="ml-1 text-blue-500 uppercase">Sign Up</a>
             </Link>
@@ -66,3 +35,10 @@ export default function Login() {
     </div>
   );
 }
+
+export default withAuthUser({
+  whenAuthed: AuthAction.REDIRECT_TO_APP,
+  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+  whenUnauthedAfterInit: AuthAction.RENDER,
+  LoaderComponent: () => <>Loading...</>,
+})(Login);
