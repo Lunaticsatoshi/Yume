@@ -6,7 +6,7 @@ export class ErrorResponse {
   statusCode: string;
 
   @Field({ nullable: true })
-  field: string;
+  field?: string;
 
   @Field()
   message: string;
