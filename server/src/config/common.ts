@@ -6,6 +6,7 @@ export const config = {
   database: {
     type: 'postgres',
     url: getEnvVariable('DATABASE_URL'),
+    password: getEnvVariable('DATABASE_PASSWORD'),
     // url: __prod__ ? process.env.DATABASE_URL : undefined,
     entities: ['dist/entities/*.js'],
     migrations: ['dist/migrations/*.js'],
