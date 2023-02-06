@@ -67,10 +67,10 @@ const RegisterForm: FC<RegisterFormProps> = ({
         />
         <InputField
           className="mb-4"
-          type="password"
+          type="text"
           value={email}
           setValue={setEmail}
-          placeholder="PASSWORD"
+          placeholder="EMAIL"
           error={errors.password}
         />
 
