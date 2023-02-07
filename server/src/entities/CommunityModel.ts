@@ -6,11 +6,22 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { Field, ObjectType } from "type-graphql";
+import { Field, ObjectType, registerEnumType } from "type-graphql";
 
 import BaseModel from './BaseModel';
 import { User } from './UserModel';
 import { Post } from './PostModel';
+
+export enum COMMUNITY_TYPE {
+  PUBLIC = 'PUBLIC',
+  RESTRICTED = 'RESTRICTED',
+  PRIVATE = 'PRIVATE',
+}
+
+registerEnumType(COMMUNITY_TYPE, {
+  name: 'communityType',
+  description: 'Type of the community',
+});
 @ObjectType()
 @Entity('communities')
 export class Community extends BaseModel {
@@ -34,6 +45,10 @@ export class Community extends BaseModel {
   @Field({ nullable: true })
   @Column({ nullable: true })
   bannerUrn: string;
+
+  @Field(() => COMMUNITY_TYPE)
+  @Column({ type: "enum", default: COMMUNITY_TYPE.PUBLIC, enum: COMMUNITY_TYPE })
+  communityType: COMMUNITY_TYPE;
 
   @Field()
   @Column()

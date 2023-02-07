@@ -49,6 +49,10 @@ export class User extends BaseModel {
   @Column({ nullable: true })
   profilePicUrn: string;
 
+  @Field()
+  @Column({ default: "0" })
+  karma: string;
+
   @Field({
     defaultValue: 'https://via.placeholder.com/200/000000/FFFFFF/?text=LL',
   })
