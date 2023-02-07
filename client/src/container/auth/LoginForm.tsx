@@ -42,6 +42,7 @@ const LoginForm: FC<LoginFormProps> = ({
       const auth = getAuth();
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
+      onSubmit?.();
     } catch (err: any) {
       setErrors({ general: 'Google sign-in failed. Please try again!' });
     }

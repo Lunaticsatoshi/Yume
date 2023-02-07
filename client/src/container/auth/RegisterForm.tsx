@@ -69,6 +69,8 @@ const RegisterForm: FC<RegisterFormProps> = ({
           }
         }
       });
+
+      onSubmit?.();
     } catch (err: any) {
       setErrors({ general: 'Google sign-in failed. Please try again!' });
     }
