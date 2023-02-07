@@ -1,10 +1,12 @@
 import { hash } from 'argon2';
 import { createFirebaseUser } from '../../common/utils/create-firebase-user';
-import { createDataSource } from '../../common/utils/data-source';
-import { User } from '../../entities/UserModel';
+// import { createDataSource } from '../../common/utils/data-source';
+import { AUTH_TYPE, User } from '../../entities/UserModel';
 import { RegisterUserInput, UserResponse } from './user-interface';
 
-export const validateRegister = (options: RegisterUserInput) => {
+export const validateRegister = (
+  options: Omit<RegisterUserInput, 'password' | 'authType'>,
+) => {
   if (options.username.includes('@')) {
     return [
       {
@@ -38,45 +40,45 @@ export const createUser = async ({
   email,
   username,
   password,
+  authType,
 }: RegisterUserInput): Promise<UserResponse> => {
   let errors = [];
-
-  const hashedPassword = await hash(password);
-
-  errors = validateRegister({ email, username, password });
-
-  if (errors.length > 0) {
-    return {
-      errors,
-      user: {} as User,
-    };
-  }
-
-  // eslint-disable-next-line init-declarations
-  let user: User;
+//   const dataSource = await createDataSource();
+  let hashedPassword = '';
 
   try {
-    const dataSource = await createDataSource();
-    // User.create({}).save()
-    const result = await dataSource
-      .createQueryBuilder()
-      .insert()
-      .into(User)
-      .values({
-        username,
-        email,
-        password: hashedPassword,
-      })
-      .returning('*')
-      .execute();
+    if (!password && authType === AUTH_TYPE.EMAIL_AND_PASSWORD) {
+      return {
+        errors: [
+          {
+            field: 'password',
+            statusCode: '403',
+            message: 'password cannot be empty',
+          },
+        ],
+      };
+    }
 
-    user = result.raw[0];
+    if (password) {
+      hashedPassword = await hash(password);
+    }
 
-    await createFirebaseUser(user.email, user.userId);
+    errors = validateRegister({ email, username });
+
+    if (errors.length > 0) {
+      return {
+        errors,
+        user: {} as User,
+      };
+    }
+
+    const createdUser = await User.create({ email, username, authType, password: hashedPassword }).save();
+
+    await createFirebaseUser(createdUser.email, createdUser.userId);
 
     return {
       errors: [],
-      user,
+      user: createdUser,
     };
   } catch (err) {
     // duplicate username error
@@ -84,9 +86,9 @@ export const createUser = async ({
       return {
         errors: [
           {
-            field: 'username',
+            field: 'username | email',
             statusCode: '403',
-            message: 'Username already taken',
+            message: 'username or email already exists',
           },
         ],
         user: {} as User,

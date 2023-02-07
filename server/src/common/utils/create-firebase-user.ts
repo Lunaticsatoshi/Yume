@@ -18,6 +18,7 @@ export const createFirebaseUser = async (email: string, userId: string) => {
 
     await admin.auth().setCustomUserClaims(user.uid, {
       id: userId,
+      email,
     });
   } catch (error) {
     throw new Error(error.message);

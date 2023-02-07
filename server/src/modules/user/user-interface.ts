@@ -1,7 +1,7 @@
 import { IsEmail, Length } from 'class-validator';
 import { InputType, Field, ObjectType } from 'type-graphql';
 import { ErrorResponse } from '../../common/objects/error';
-import { User } from '../../entities/UserModel';
+import { User, AUTH_TYPE } from '../../entities/UserModel';
 
 @InputType()
 export class RegisterUserInput {
@@ -13,9 +13,11 @@ export class RegisterUserInput {
   @Field()
   username: string;
 
-  @Length(3, 255, { message: 'Password Must be at least 3 characters long' })
-  @Field()
-  password: string;
+  @Field({ nullable: true })
+  password?: string;
+
+  @Field(() => AUTH_TYPE, { defaultValue: AUTH_TYPE.EMAIL_AND_PASSWORD })
+  authType: AUTH_TYPE;
 }
 
 @ObjectType()
