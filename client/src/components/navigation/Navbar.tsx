@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
 //   };
 
   return (
-    <div className="sticky inset-x-0 top-0 z-10 flex items-center justify-between h-12 px-5 mt-2 bg-white">
+    <div className="sticky inset-x-0 top-0 z-10 flex items-center justify-between px-5 py-1 bg-white dark:text-white dark:bg-black-500">
       {/* Logo and title */}
       <div className="flex items-center">
         <Link href="/">

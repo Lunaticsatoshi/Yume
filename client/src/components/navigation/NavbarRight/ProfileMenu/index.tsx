@@ -18,12 +18,9 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isAuthenticated }) => {
   return (
     <Menu>
       <MenuButton
-        cursor="pointer"
-        padding="2px 6px"
-        borderRadius="4px"
-        _hover={{ outline: '1px solid', outlineColor: 'gray.200' }}
+        className="py-1 px-2 cursor-pointer rounded-md dark:hover:border-black-200 border border-transparent hover:border-gray-200"
       >
-        <div className={`flex items-center justify-between ${isAuthenticated ? 'w-52' : 'w-12'}`}>
+        <div className={`flex items-center justify-between ${isAuthenticated ? 'md:w-52 w-full' : 'w-12'}`}>
           <div className="flex items-center w-full">
             {isAuthenticated ? (
               <div className="w-full flex items-center">
