@@ -27,11 +27,11 @@ export class Community extends BaseModel {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   imageUrn: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   bannerUrn: string;
 

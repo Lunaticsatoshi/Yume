@@ -1,10 +1,11 @@
-import { Entity, Column, Index, OneToMany } from 'typeorm';
+import { Entity, Column, Index, OneToMany, BeforeInsert } from 'typeorm';
 import { IsEmail, Length } from 'class-validator';
+import { Field, ObjectType, registerEnumType } from 'type-graphql';
+import { v4 as uuidv4 } from "uuid";
 
 import BaseModel from './BaseModel';
 import { Post } from './PostModel';
 import { Vote } from './VoteModel';
-import { Field, ObjectType, registerEnumType } from 'type-graphql';
 
 export enum AUTH_TYPE {
   EMAIL_AND_PASSWORD = 'EMAIL_AND_PASSWORD',
@@ -42,10 +43,10 @@ export class User extends BaseModel {
 
   @Field(() => AUTH_TYPE)
   @Column({ type: "enum", default: AUTH_TYPE.EMAIL_AND_PASSWORD, enum: AUTH_TYPE })
-  voteType: AUTH_TYPE;
+  authType: AUTH_TYPE;
 
   @Field()
-  @Column()
+  @Column({ nullable: true })
   profilePicUrn: string;
 
   @Field({
@@ -68,4 +69,9 @@ export class User extends BaseModel {
   @Field(() => [Vote], { nullable: true })
   @OneToMany(() => Vote, (vote) => vote.user)
   votes: Vote[];
+
+  @BeforeInsert()
+  generateUserId() {
+    this.userId = uuidv4();
+  }
 }

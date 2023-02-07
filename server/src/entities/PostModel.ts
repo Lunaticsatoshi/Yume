@@ -40,6 +40,10 @@ export class Post extends BaseModel {
   @Column()
   communityName: string;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  imageUrn: string;
+
   @Field()
   @Column()
   username: string;
@@ -63,11 +67,11 @@ export class Post extends BaseModel {
   votes: Vote[];
 
   @Field()
-  @Column()
+  @Column({ default: 0 })
   voteCount: number;
 
   @Field()
-  @Column()
+  @Column({ default: 0 })
   commentCount: number;
 
   @Field()
