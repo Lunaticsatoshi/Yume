@@ -14,12 +14,14 @@ interface RegisterFormProps {
   initialEmail?: string;
   message?: string;
   roundedButton?: boolean;
+  onSubmit?: () => void
 }
 
 const RegisterForm: FC<RegisterFormProps> = ({
   initialEmail,
   message,
   roundedButton = false,
+  onSubmit,
 }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -30,6 +32,7 @@ const RegisterForm: FC<RegisterFormProps> = ({
     try {
       e.preventDefault();
       await createUserWithEmailAndPassword(auth, email, password);
+      onSubmit?.();
     } catch (err: any) {
       console.log(err);
       setErrors({ general: 'Invalid email or password!' });
@@ -39,7 +42,8 @@ const RegisterForm: FC<RegisterFormProps> = ({
   const triggerPopupSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      console.log({ result });
     } catch (err: any) {
       setErrors({ general: 'Google sign-in failed. Please try again!' });
     }
@@ -49,7 +53,7 @@ const RegisterForm: FC<RegisterFormProps> = ({
     <div className="w-full mt-2">
       {message ? <p className="mb-10 text-sm">{message}</p> : null}
 
-      <GoogleOAuthButton onClick={() => {}} />
+      <GoogleOAuthButton onClick={triggerPopupSignIn} />
 
       <div className="w-full h-0.5 bg-gray-200 mb-12 relative">
         <div className="bg-white w-10 absolute -top-2.5 left-36 text-center text-gray-400">

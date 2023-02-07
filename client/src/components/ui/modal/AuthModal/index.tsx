@@ -14,14 +14,14 @@ import { LoginForm, RegisterForm } from 'src/container';
 
 type AuthModalProps = {};
 
-const getAuthModalBody = (view: string, toggleView: (view: string) => unknown) => {
+const getAuthModalBody = (view: string, toggleView: (view: string) => unknown, handleClose: () => void) => {
   switch (view) {
     case 'login':
-      return <LoginForm />;
+      return <LoginForm onSubmit={handleClose} />;
     case 'signup':
       return (
         <>
-          <RegisterForm />{' '}
+          <RegisterForm onSubmit={handleClose} />{' '}
           <small className="w-full flex justify-center">
             Have an account?
             <div onClick={() => toggleView("login")} className="ml-1 text-blue-500 uppercase">Log In</div>
@@ -74,7 +74,7 @@ const AuthModal: React.FC<AuthModalProps> = () => {
           justifyContent="center"
           width="70%"
         >
-          {getAuthModalBody(modalState.view, toggleView)}
+          {getAuthModalBody(modalState.view, toggleView, handleClose)}
           {/* // Will implement at end of tutorial */}
           {/* {user && !currentUser && (
                 <>

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, FormEvent, useState } from 'react';
 import {
   getAuth,
   GoogleAuthProvider,
@@ -13,21 +13,25 @@ interface LoginFormProps {
   initialEmail?: string;
   message?: string;
   roundedButton?: boolean;
+  onSubmit?: () => void
 }
 
 const LoginForm: FC<LoginFormProps> = ({
   initialEmail,
   message,
   roundedButton = false,
+  onSubmit,
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<any>({});
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     try {
+      e.preventDefault();
       const auth = getAuth();
       await signInWithEmailAndPassword(auth, email, password);
+      onSubmit?.();
     } catch (err: any) {
       setErrors({ general: 'Invalid email or password!' });
     }
@@ -46,14 +50,14 @@ const LoginForm: FC<LoginFormProps> = ({
     <div className="w-full mt-2">
       {message ? <p className="mb-10 text-sm">{message}</p> : null}
 
-      <GoogleOAuthButton onClick={() => {}} />
+      <GoogleOAuthButton onClick={triggerPopupSignIn} />
 
       <div className="w-full h-0.5 bg-gray-200 mb-12 relative">
         <div className="bg-white w-10 absolute -top-2.5 left-36 text-center text-gray-400">
           OR
         </div>
       </div>
-      <form onSubmit={() => {}}>
+      <form onSubmit={handleSubmit}>
         <InputField
           className="mb-2"
           type="text"
