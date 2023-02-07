@@ -13,7 +13,14 @@ const ENV: string | number = process.env.NODE_ENV || 'development';
 (async () => {
   console.log("Connecting to Postgress.....");
   try {
-    await createDataSource();
+    const dataSource = await createDataSource();
+
+    await dataSource.initialize();
+    await dataSource.synchronize();
+    // await dataSource.runMigrations();
+    if(dataSource.isInitialized) {
+      console.log("connected to database");
+    }
 
     // console.log("connected, running migrations now", dataSource);
     // await dataSource.runMigrations();

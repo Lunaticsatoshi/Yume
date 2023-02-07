@@ -1,5 +1,5 @@
 import { hash } from 'argon2';
-import { createFirebaseUser } from 'src/common/utils/create-firebase-user';
+import { createFirebaseUser } from '../../common/utils/create-firebase-user';
 import { createDataSource } from '../../common/utils/data-source';
 import { User } from '../../entities/UserModel';
 import { RegisterUserInput, UserResponse } from './user-interface';
