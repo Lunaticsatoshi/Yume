@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 
-export type MyContext = {
+export type RequestContext = {
   req: Request;
   res: Response;
+  payload: any;
 };
 
 export interface IRequestContextUser {
