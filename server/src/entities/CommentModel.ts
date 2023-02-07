@@ -31,12 +31,12 @@ export class Comment extends BaseModel {
   username: string;
 
   @Field(() => User)
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'username', referencedColumnName: 'username' })
   user: User;
 
   @Field(() => Post)
-  @ManyToOne(() => Post, (post) => post.comments, { nullable: false })
+  @ManyToOne(() => Post, (post) => post.comments, { nullable: false, onDelete: "CASCADE" })
   post: Post;
 
   @Field(() => [Vote], { nullable: true })

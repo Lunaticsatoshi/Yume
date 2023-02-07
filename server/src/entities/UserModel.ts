@@ -4,7 +4,17 @@ import { IsEmail, Length } from 'class-validator';
 import BaseModel from './BaseModel';
 import { Post } from './PostModel';
 import { Vote } from './VoteModel';
-import { Field, ObjectType } from 'type-graphql';
+import { Field, ObjectType, registerEnumType } from 'type-graphql';
+
+export enum AUTH_TYPE {
+  EMAIL_AND_PASSWORD = 'EMAIL_AND_PASSWORD',
+  GOOGLE = 'GOOGLE',
+}
+
+registerEnumType(AUTH_TYPE, {
+  name: 'authType',
+  description: 'Type of the authentication method used',
+});
 
 @ObjectType()
 @Entity('users')
@@ -27,8 +37,12 @@ export class User extends BaseModel {
   @Column({ unique: true })
   username: string;
 
-  @Column()
-  password: string;
+  @Column({ nullable: true })
+  password?: string;
+
+  @Field(() => AUTH_TYPE)
+  @Column({ type: "enum", default: AUTH_TYPE.EMAIL_AND_PASSWORD, enum: AUTH_TYPE })
+  voteType: AUTH_TYPE;
 
   @Field()
   @Column()

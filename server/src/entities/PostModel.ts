@@ -45,12 +45,12 @@ export class Post extends BaseModel {
   username: string;
 
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'username', referencedColumnName: 'username' })
   user: User;
 
   @Field(() => Community)
-  @ManyToOne(() => Community, (community) => community.posts)
+  @ManyToOne(() => Community, (community) => community.posts, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'communityName', referencedColumnName: 'name' })
   community: Community;
 

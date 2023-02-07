@@ -40,7 +40,7 @@ export class Community extends BaseModel {
   username: string;
 
   @Field(() => User)
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'username', referencedColumnName: 'username' })
   user: User;
 
