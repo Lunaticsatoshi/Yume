@@ -1,13 +1,14 @@
 import { FC, FormEvent, useState } from 'react';
 import {
   GoogleAuthProvider,
-  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth';
 
 import { auth } from 'src/utils/firebaseClient';
 
 import { GoogleOAuthButton, InputField } from 'src/components';
+import { AuthType, useCreateUserMutation } from 'src/generated/graphql';
 
 // The type of props LoginForm receives
 interface RegisterFormProps {
@@ -28,10 +29,23 @@ const RegisterForm: FC<RegisterFormProps> = ({
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<any>({});
 
+  const [registerUser] = useCreateUserMutation();
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
-      await createUserWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
+
+      await registerUser({
+        variables: {
+          data: {
+            email,
+            username,
+            password,
+            authType: AuthType.EmailAndPassword
+          }
+        }
+      });
       onSubmit?.();
     } catch (err: any) {
       console.log(err);
@@ -43,7 +57,18 @@ const RegisterForm: FC<RegisterFormProps> = ({
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      console.log({ result });
+      if(!result.user?.email || !result.user.displayName) {
+        return;
+      }
+      await registerUser({
+        variables: {
+          data: {
+            email: result.user.email,
+            username: result.user.displayName,
+            authType: AuthType.Google
+          }
+        }
+      });
     } catch (err: any) {
       setErrors({ general: 'Google sign-in failed. Please try again!' });
     }
@@ -80,7 +105,7 @@ const RegisterForm: FC<RegisterFormProps> = ({
 
         <InputField
           className="mb-4"
-          type="confirm password"
+          type="password"
           value={password}
           setValue={setPassword}
           placeholder="PASSWORD"

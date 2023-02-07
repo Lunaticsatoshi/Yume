@@ -1,0 +1,15 @@
+mutation CreateUser($data: RegisterUserInput!) {
+  createUser(data: $data) {
+    user {
+      userId
+      email
+      username
+      authType
+    }
+    errors {
+      field
+      statusCode
+      message
+    }
+  }
+}
