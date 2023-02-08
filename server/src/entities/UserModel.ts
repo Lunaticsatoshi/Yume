@@ -1,4 +1,4 @@
-import { Entity, Column, Index, OneToMany, BeforeInsert } from 'typeorm';
+import { Entity, Column, Index, OneToMany, BeforeInsert, ManyToMany } from 'typeorm';
 import { IsEmail, Length } from 'class-validator';
 import { Field, ObjectType, registerEnumType } from 'type-graphql';
 import { v4 as uuidv4 } from "uuid";
@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import BaseModel from './BaseModel';
 import { Post } from './PostModel';
 import { Vote } from './VoteModel';
+import { Community } from './CommunityModel';
 
 export enum AUTH_TYPE {
   EMAIL_AND_PASSWORD = 'EMAIL_AND_PASSWORD',
@@ -73,6 +74,10 @@ export class User extends BaseModel {
   @Field(() => [Vote], { nullable: true })
   @OneToMany(() => Vote, (vote) => vote.user)
   votes: Vote[];
+
+  @Field(() => [Community])
+  @ManyToMany(() => Community, (community) => community.members)
+  communities: Community[];
 
   @BeforeInsert()
   generateUserId() {

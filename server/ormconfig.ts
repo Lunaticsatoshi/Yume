@@ -1,7 +1,6 @@
 import { DataSource } from "typeorm";
 
 export const connectionSource = new DataSource({
-    migrationsTableName: 'migrations',
     url: 'postgresql://postgres:postgres@localhost:5432/redditclone',
     password: 'postgres',
     type: 'postgres',

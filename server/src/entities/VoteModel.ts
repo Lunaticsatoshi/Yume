@@ -29,12 +29,12 @@ export class Vote extends BaseModel {
 
   @Field(() => User)
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'username', referencedColumnName: 'username' })
+  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
   user: User;
 
   @Field()
   @Column()
-  username: string;
+  userId: string;
 
   @Field(() => Post)
   @ManyToOne(() => Post)

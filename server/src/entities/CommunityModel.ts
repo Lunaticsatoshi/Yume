@@ -5,6 +5,8 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Field, ObjectType, registerEnumType } from "type-graphql";
 
@@ -12,13 +14,13 @@ import BaseModel from './BaseModel';
 import { User } from './UserModel';
 import { Post } from './PostModel';
 
-export enum COMMUNITY_TYPE {
+export enum CommunityType {
   PUBLIC = 'PUBLIC',
   RESTRICTED = 'RESTRICTED',
   PRIVATE = 'PRIVATE',
 }
 
-registerEnumType(COMMUNITY_TYPE, {
+registerEnumType(CommunityType, {
   name: 'communityType',
   description: 'Type of the community',
 });
@@ -46,18 +48,23 @@ export class Community extends BaseModel {
   @Column({ nullable: true })
   bannerUrn: string;
 
-  @Field(() => COMMUNITY_TYPE)
-  @Column({ type: "enum", default: COMMUNITY_TYPE.PUBLIC, enum: COMMUNITY_TYPE })
-  communityType: COMMUNITY_TYPE;
+  @Field(() => CommunityType)
+  @Column({ default: CommunityType.PUBLIC })
+  communityType: CommunityType;
 
   @Field()
   @Column()
-  username: string;
+  userId: string;
 
   @Field(() => User)
   @ManyToOne(() => User, { onDelete: "CASCADE" })
-  @JoinColumn({ name: 'username', referencedColumnName: 'username' })
-  user: User;
+  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
+  creator: User;
+
+  @Field(() => [User])
+  @ManyToMany(() => User, (user) => user.communities, { cascade: true })
+  @JoinTable({ name: 'members' })
+  members: User[];
 
   @Field(() => [Post], { nullable: true })
   @OneToMany(() => Post, (post) => post.community)
