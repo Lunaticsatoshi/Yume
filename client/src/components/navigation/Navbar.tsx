@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useAuthState } from 'src/hooks';
 import { SearchInput } from 'src/components';
 import NavbarRight from './NavbarRight';
+import Directory from './NavbarRight/Directory';
 
 const Navbar: React.FC = () => {
   const [name, setName] = useState('');
@@ -33,7 +34,7 @@ const Navbar: React.FC = () => {
   return (
     <div className="sticky inset-x-0 top-0 z-10 flex items-center justify-between px-5 py-1 bg-white dark:text-white dark:bg-black-500">
       {/* Logo and title */}
-      <div className="flex items-center">
+      <div className="flex items-center w-52">
         <Link href="/">
           <a>
           <Image width="40px" src="/images/redditFace.svg" height="40px" />
@@ -47,6 +48,7 @@ const Navbar: React.FC = () => {
         />
         </span>
       </div>
+      { isAuthenticated ? <Directory /> : null}
       {/* Search Input */}
       <SearchInput onChange={() => {}} />
       {/* Auth buttons */}
