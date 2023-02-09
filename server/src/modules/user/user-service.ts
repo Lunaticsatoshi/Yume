@@ -1,6 +1,9 @@
 import { hash } from 'argon2';
-import { createFirebaseUser } from '../../common/utils/create-firebase-user';
-// import { createDataSource } from '../../common/utils/data-source';
+import { validate } from 'class-validator';
+
+import { createFirebaseUser } from '../../common/utils/createFirebaseUser';
+import { createDataSource } from '../../common/utils/dataSource';
+import { createErrorMapArray } from './../../common/utils/createErrorMap';
 import { AUTH_TYPE, User } from '../../entities/UserModel';
 import { RegisterUserInput, UserResponse } from './user-interface';
 
@@ -29,7 +32,7 @@ export const getUserById = async (userId: string) => {
 };
 
 export const getUserByEmail = async (email: string) => {
-  return await User.findOne({ where: { email } });
+  return await User.findOne({ where: { email, } });
 };
 
 export const getUserByUsername = async (username: string) => {
@@ -43,7 +46,9 @@ export const createUser = async ({
   authType,
 }: RegisterUserInput): Promise<UserResponse> => {
   let errors = [];
-//   const dataSource = await createDataSource();
+  const dataSource = await createDataSource();
+
+  const userRepository = dataSource.getRepository(User);
   let hashedPassword = '';
 
   try {
@@ -64,16 +69,26 @@ export const createUser = async ({
       hashedPassword = await hash(password);
     }
 
-    errors = validateRegister({ email, username });
+    const validationErrors = validateRegister({ email, username });
+
+    const user = new User();
+
+    user.email = email;
+    user.username = username;
+    user.password = hashedPassword;
+    user.authType = authType;
+
+    errors = await validate(user);
+    const errorMapArray = createErrorMapArray(errors);
 
     if (errors.length > 0) {
-      return {
-        errors,
-        user: null,
-      };
-    }
+        return {
+          errors: [...errorMapArray, ...validationErrors],
+          user: null,
+        };
+      }
 
-    const createdUser = await User.create({ email, username, authType, password: hashedPassword }).save();
+    const createdUser = await userRepository.save(user);
 
     await createFirebaseUser(createdUser.email, createdUser._id);
 
@@ -96,14 +111,19 @@ export const createUser = async ({
       };
     }
 
-    return {
-      errors: [
-        {
-          statusCode: '500',
-          message: 'Something went wrong',
-        },
-      ],
-      user: null,
-    };
+    console.log(err.message);
+
+    throw new Error(err.message);
   }
+};
+
+export const updateUser = async (_id: string, data: Partial<User>) => {
+    const dataSource = await createDataSource();
+    const userRepository = dataSource.getRepository(User);
+
+    const user = await userRepository.findOneOrFail({ where: { _id } });
+
+    userRepository.merge(user, { ...data });
+
+    return await userRepository.save(user);
 };

@@ -7,48 +7,51 @@ import {
   UseMiddleware,
   Ctx,
 } from 'type-graphql';
+
+import { UserErrors, GeneralErrors } from './../../common/enums/errors.enum';
 import { RequestContext } from '../../common/interfaces/RequestContext';
 import { User } from '../../entities/UserModel';
 import { isAuth } from '../../common/middleware/isAuth';
 
 import { RegisterUserInput, UserResponse } from './user-interface';
-import { getUserById, createUser } from './user-service';
+import { getUserById, getUsers, createUser } from './user-service';
 import { GraphQLError } from 'graphql';
 
 @Resolver(User)
 export class UserResolver {
-  @Query(() => UserResponse, { nullable: true })
+  @Query(() => User, { nullable: true })
   @UseMiddleware(isAuth)
-  async getCurrentUser(@Ctx() { user }: RequestContext): Promise<UserResponse> {
+  async getCurrentUser(@Ctx() { user }: RequestContext): Promise<User> {
     try {
       const currentUser = await getUserById(user.id);
 
       if (!currentUser) {
-        return {
-          user: null,
-          errors: [
-            {
-              statusCode: '404',
-              message: 'user not found',
-            },
-          ],
-        };
+        throw new Error(UserErrors.GetUser);
       }
 
-      return {
-        user: currentUser,
-        errors: [],
-      };
+      return currentUser;
     } catch (error) {
-      return {
-        user: null,
-        errors: [
-          {
-            statusCode: '500',
-            message: 'Something went wrong',
-          },
-        ],
-      };
+      switch(error.message) {
+        case UserErrors.GetUser:
+          throw new GraphQLError(UserErrors.GetUser);
+        default:
+          throw new GraphQLError(GeneralErrors.SERVER);
+      }
+    }
+  }
+
+  @Query(() => [User], { nullable: true })
+  async getAllUsers(): Promise<User[]> {
+    try {
+      const users = await getUsers();
+
+      if (!users || users.length < 0) {
+        throw new Error("Users not found!");
+      }
+
+      return users;
+    } catch (error) {
+      throw new GraphQLError(error.message);
     }
   }
 
@@ -59,7 +62,7 @@ export class UserResolver {
 
       return createdData;
     } catch (error) {
-      throw new GraphQLError('Error while creating user');
+      throw new GraphQLError(UserErrors.CreateUser);
     }
   }
 }
