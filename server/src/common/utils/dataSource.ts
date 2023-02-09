@@ -3,10 +3,10 @@ import { DataSource, DataSourceOptions } from "typeorm";
 
 import { config } from '../../config/common';
 
-export const createDataSource = () => {
+export const createDataSource = async () => {
   const dataSourceOptions = config.database as DataSourceOptions;
 
-  const AppDataSource = new DataSource(dataSourceOptions);
+  const dataSource = new DataSource(dataSourceOptions);
 
-  return AppDataSource;
+  return await dataSource.initialize();
 };
