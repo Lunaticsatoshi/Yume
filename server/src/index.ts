@@ -3,9 +3,11 @@ config();
 
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
+
 import { createDataSource } from './common/utils/dataSource';
 import app from './app';
-import { UserResolver } from './modules/user/user-resolver';
+import { UserResolver } from './modules/user/user.resolver';
+import { CommunityResolver } from './modules/community/community.resolver';
 
 const PORT: string | number = process.env.PORT || 5000;
 const ENV: string | number = process.env.NODE_ENV || 'development';
@@ -26,7 +28,7 @@ const ENV: string | number = process.env.NODE_ENV || 'development';
     // console.log("migrations ran");
     const apolloServer = new ApolloServer({
       schema: await buildSchema({
-        resolvers: [UserResolver],
+        resolvers: [UserResolver, CommunityResolver],
         validate: false,
       }),
       context: ({ req, res }) => ({
