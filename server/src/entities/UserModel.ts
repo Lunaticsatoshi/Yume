@@ -40,9 +40,9 @@ export class User extends BaseModel {
   @Column({ type: "enum", default: AUTH_TYPE.EMAIL_AND_PASSWORD, enum: AUTH_TYPE })
   authType: AUTH_TYPE;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
-  profilePicUrn: string;
+  profilePicUrn?: string;
 
   @Field()
   @Column({ default: "0" })
@@ -50,6 +50,7 @@ export class User extends BaseModel {
 
   @Field({
     defaultValue: 'https://via.placeholder.com/200/000000/FFFFFF/?text=LL',
+    nullable: true,
   })
   profileUrl: string;
 

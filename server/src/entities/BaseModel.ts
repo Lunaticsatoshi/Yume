@@ -8,9 +8,10 @@ import {
   BeforeInsert,
 } from 'typeorm';
 import { instanceToPlain } from 'class-transformer';
-import { Field } from 'type-graphql';
+import { Field, ObjectType } from 'type-graphql';
 import { v4 as uuidv4 } from "uuid";
 
+@ObjectType()
 export default abstract class BaseModel extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
