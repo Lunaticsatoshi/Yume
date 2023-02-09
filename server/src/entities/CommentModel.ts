@@ -32,7 +32,7 @@ export class Comment extends BaseModel {
 
   @Field(() => User)
   @ManyToOne(() => User, { onDelete: "CASCADE" })
-  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
+  @JoinColumn({ name: 'userId', referencedColumnName: '_id' })
   user: User;
 
   @Field(() => Post)

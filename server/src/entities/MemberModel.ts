@@ -32,7 +32,7 @@ export class Member extends BaseModel {
 
   @Field(() => User)
   @OneToOne(() => User)
-  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
+  @JoinColumn({ name: 'userId', referencedColumnName: '_id' })
   user: User;
 
   @Field(() => Community)

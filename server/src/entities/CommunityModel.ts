@@ -58,7 +58,7 @@ export class Community extends BaseModel {
 
   @Field(() => User)
   @ManyToOne(() => User, { onDelete: "CASCADE" })
-  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
+  @JoinColumn({ name: 'userId', referencedColumnName: '_id' })
   creator: User;
 
   @Field(() => [User])

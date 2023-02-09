@@ -50,7 +50,7 @@ export class Post extends BaseModel {
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
-  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
+  @JoinColumn({ name: 'userId', referencedColumnName: '_id' })
   user: User;
 
   @Field(() => Community)

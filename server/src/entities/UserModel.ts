@@ -1,7 +1,6 @@
-import { Entity, Column, Index, OneToMany, BeforeInsert, ManyToMany } from 'typeorm';
+import { Entity, Column, Index, OneToMany, ManyToMany } from 'typeorm';
 import { IsEmail, Length } from 'class-validator';
 import { Field, ObjectType, registerEnumType } from 'type-graphql';
-import { v4 as uuidv4 } from "uuid";
 
 import BaseModel from './BaseModel';
 import { Post } from './PostModel';
@@ -21,11 +20,6 @@ registerEnumType(AUTH_TYPE, {
 @ObjectType()
 @Entity('users')
 export class User extends BaseModel {
-  @Field()
-  @Column({ type: 'uuid', unique: true })
-  @Index()
-  userId: string;
-
   @Field()
   @Index()
   @IsEmail(undefined, { message: 'Must be a valid email address' })
@@ -78,9 +72,4 @@ export class User extends BaseModel {
   @Field(() => [Community])
   @ManyToMany(() => Community, (community) => community.members)
   communities: Community[];
-
-  @BeforeInsert()
-  generateUserId() {
-    this.userId = uuidv4();
-  }
 }
