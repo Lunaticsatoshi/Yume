@@ -58,11 +58,11 @@ export class Post extends BaseModel {
   @JoinColumn({ name: 'communityName', referencedColumnName: 'name' })
   community: Community;
 
-  @Field(() => User)
+  @Field(() => [Comment])
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];
 
-  @Field(() => Vote)
+  @Field(() => [Vote])
   @OneToMany(() => Vote, (vote) => vote.post)
   votes: Vote[];
 
