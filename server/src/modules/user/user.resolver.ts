@@ -6,15 +6,17 @@ import {
   Arg,
   UseMiddleware,
   Ctx,
+  FieldResolver,
+  Root,
 } from 'type-graphql';
 
-import { UserErrors, GeneralErrors } from './../../common/enums/errors.enum';
+import { UserErrors, GeneralErrors } from '../../common/enums/errors.enum';
 import { RequestContext } from '../../common/interfaces/RequestContext';
 import { User } from '../../entities/UserModel';
 import { isAuth } from '../../common/middleware/isAuth';
 
-import { RegisterUserInput, UserResponse } from './user-interface';
-import { getUserById, getUsers, createUser } from './user-service';
+import { RegisterUserInput, UserResponse } from './user.interface';
+import { getUserById, getUsers, createUser } from './user.service';
 import { GraphQLError } from 'graphql';
 
 @Resolver(User)
@@ -23,6 +25,7 @@ export class UserResolver {
   @UseMiddleware(isAuth)
   async getCurrentUser(@Ctx() { user }: RequestContext): Promise<User> {
     try {
+      console.log('Getting current user', { user });
       const currentUser = await getUserById(user.id);
 
       if (!currentUser) {
@@ -31,7 +34,7 @@ export class UserResolver {
 
       return currentUser;
     } catch (error) {
-      switch(error.message) {
+      switch (error.message) {
         case UserErrors.GetUser:
           throw new GraphQLError(UserErrors.GetUser);
         default:
@@ -46,7 +49,7 @@ export class UserResolver {
       const users = await getUsers();
 
       if (!users || users.length < 0) {
-        throw new Error("Users not found!");
+        throw new Error('Users not found!');
       }
 
       return users;
@@ -58,11 +61,27 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async createUser(@Arg('data') data: RegisterUserInput) {
     try {
+      console.log('Creating user', { data });
       const createdData = await createUser(data);
 
       return createdData;
     } catch (error) {
       throw new GraphQLError(UserErrors.CreateUser);
+    }
+  }
+
+  @FieldResolver(() => String)
+  profileUrl(@Root() user: User): string {
+    try {
+      if (!user.profilePicUrn) {
+        return 'https://via.placeholder.com/200/000000/FFFFFF/?text=LL';
+      }
+
+      return user.profilePicUrn;
+    } catch (error) {
+      console.error('Error resolving profile pic: ', { error });
+
+      return 'https://via.placeholder.com/200/000000/FFFFFF/?text=LL';
     }
   }
 }

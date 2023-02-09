@@ -3,9 +3,15 @@ import { validate } from 'class-validator';
 
 import { createFirebaseUser } from '../../common/utils/createFirebaseUser';
 import { createDataSource } from '../../common/utils/dataSource';
-import { createErrorMapArray } from './../../common/utils/createErrorMap';
+import { createErrorMapArray } from '../../common/utils/createErrorMap';
 import { AUTH_TYPE, User } from '../../entities/UserModel';
-import { RegisterUserInput, UserResponse } from './user-interface';
+import { RegisterUserInput, UserResponse } from './user.interface';
+
+export const getUserRepository = async () => {
+  const dataSource = await createDataSource();
+
+  return await dataSource.getRepository(User);
+};
 
 export const validateRegister = (
   options: Omit<RegisterUserInput, 'password' | 'authType'>,
@@ -32,7 +38,7 @@ export const getUserById = async (userId: string) => {
 };
 
 export const getUserByEmail = async (email: string) => {
-  return await User.findOne({ where: { email, } });
+  return await User.findOne({ where: { email } });
 };
 
 export const getUserByUsername = async (username: string) => {
@@ -82,11 +88,11 @@ export const createUser = async ({
     const errorMapArray = createErrorMapArray(errors);
 
     if (errors.length > 0) {
-        return {
-          errors: [...errorMapArray, ...validationErrors],
-          user: null,
-        };
-      }
+      return {
+        errors: [...errorMapArray, ...validationErrors],
+        user: null,
+      };
+    }
 
     const createdUser = await userRepository.save(user);
 
@@ -118,12 +124,12 @@ export const createUser = async ({
 };
 
 export const updateUser = async (_id: string, data: Partial<User>) => {
-    const dataSource = await createDataSource();
-    const userRepository = dataSource.getRepository(User);
+  const dataSource = await createDataSource();
+  const userRepository = dataSource.getRepository(User);
 
-    const user = await userRepository.findOneOrFail({ where: { _id } });
+  const user = await userRepository.findOneOrFail({ where: { _id } });
 
-    userRepository.merge(user, { ...data });
+  userRepository.merge(user, { ...data });
 
-    return await userRepository.save(user);
+  return await userRepository.save(user);
 };
