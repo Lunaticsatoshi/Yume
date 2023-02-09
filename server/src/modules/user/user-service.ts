@@ -25,7 +25,7 @@ export const getUsers = async () => {
 };
 
 export const getUserById = async (userId: string) => {
-  return await User.findOne({ where: { userId } });
+  return await User.findOne({ where: { _id: userId } });
 };
 
 export const getUserByEmail = async (email: string) => {
@@ -49,6 +49,7 @@ export const createUser = async ({
   try {
     if (!password && authType === AUTH_TYPE.EMAIL_AND_PASSWORD) {
       return {
+        user: null,
         errors: [
           {
             field: 'password',
@@ -68,13 +69,13 @@ export const createUser = async ({
     if (errors.length > 0) {
       return {
         errors,
-        user: {} as User,
+        user: null,
       };
     }
 
     const createdUser = await User.create({ email, username, authType, password: hashedPassword }).save();
 
-    await createFirebaseUser(createdUser.email, createdUser.userId);
+    await createFirebaseUser(createdUser.email, createdUser._id);
 
     return {
       errors: [],
@@ -91,7 +92,7 @@ export const createUser = async ({
             message: 'username or email already exists',
           },
         ],
-        user: {} as User,
+        user: null,
       };
     }
 
@@ -102,7 +103,7 @@ export const createUser = async ({
           message: 'Something went wrong',
         },
       ],
-      user: {} as User,
+      user: null,
     };
   }
 };

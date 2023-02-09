@@ -26,5 +26,14 @@ export class UserResponse {
   errors?: ErrorResponse[];
 
   @Field(() => User, { nullable: true })
-  user?: User;
+  user?: User | null;
+}
+
+@ObjectType()
+export class AllUserResponse {
+  @Field(() => [ErrorResponse], { nullable: true })
+  errors?: ErrorResponse[];
+
+  @Field(() => [User], { nullable: true })
+  user?: User[] | null;
 }

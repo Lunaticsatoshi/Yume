@@ -12,17 +12,44 @@ import { User } from '../../entities/UserModel';
 import { isAuth } from '../../common/middleware/isAuth';
 
 import { RegisterUserInput, UserResponse } from './user-interface';
-import { createUser } from './user-service';
+import { getUserById, createUser } from './user-service';
 import { GraphQLError } from 'graphql';
 
 @Resolver(User)
 export class UserResolver {
-  @Query(() => String, { nullable: true })
+  @Query(() => UserResponse, { nullable: true })
   @UseMiddleware(isAuth)
-  getCurrentUser(@Ctx() { payload }: RequestContext) {
-    console.log({ payload });
+  async getCurrentUser(@Ctx() { user }: RequestContext): Promise<UserResponse> {
+    try {
+      const currentUser = await getUserById(user.id);
 
-    return 'hello';
+      if (!currentUser) {
+        return {
+          user: null,
+          errors: [
+            {
+              statusCode: '404',
+              message: 'user not found',
+            },
+          ],
+        };
+      }
+
+      return {
+        user: currentUser,
+        errors: [],
+      };
+    } catch (error) {
+      return {
+        user: null,
+        errors: [
+          {
+            statusCode: '500',
+            message: 'Something went wrong',
+          },
+        ],
+      };
+    }
   }
 
   @Mutation(() => UserResponse)
