@@ -1,3 +1,10 @@
 query GetCurrentUser {
-    getCurrentUser
+  getCurrentUser {
+    _id
+    email
+    username
+    authType
+    profilePicUrn
+    profileUrl
+  }
 }

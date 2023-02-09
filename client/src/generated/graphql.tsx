@@ -13,30 +13,39 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTime: any;
 };
 
 export type Comment = {
   __typename?: 'Comment';
+  _id: Scalars['String'];
   body: Scalars['String'];
+  createdAt: Scalars['DateTime'];
   identifier: Scalars['String'];
   post: Post;
+  updatedAt: Scalars['DateTime'];
   user: User;
-  username: Scalars['String'];
+  userId: Scalars['String'];
   votes?: Maybe<Array<Vote>>;
 };
 
 export type Community = {
   __typename?: 'Community';
+  _id: Scalars['String'];
   bannerUrl: Scalars['String'];
-  bannerUrn: Scalars['String'];
+  bannerUrn?: Maybe<Scalars['String']>;
+  communityType: CommunityType;
+  createdAt: Scalars['DateTime'];
+  creator: User;
   description: Scalars['String'];
   imageUrl: Scalars['String'];
-  imageUrn: Scalars['String'];
+  imageUrn?: Maybe<Scalars['String']>;
+  members: Array<User>;
   name: Scalars['String'];
   posts?: Maybe<Array<Post>>;
   title: Scalars['String'];
-  user: User;
-  username: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  userId: Scalars['String'];
 };
 
 export type ErrorResponse = {
@@ -58,24 +67,29 @@ export type MutationCreateUserArgs = {
 
 export type Post = {
   __typename?: 'Post';
+  _id: Scalars['String'];
   body: Scalars['String'];
   commentCount: Scalars['Float'];
   comments: User;
   community: Community;
   communityName: Scalars['String'];
+  createdAt: Scalars['DateTime'];
   identifier: Scalars['String'];
+  imageUrn?: Maybe<Scalars['String']>;
   slug: Scalars['String'];
   title: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
   url: Scalars['String'];
   user: User;
-  username: Scalars['String'];
+  userId: Scalars['String'];
   voteCount: Scalars['Float'];
   votes: Vote;
 };
 
 export type Query = {
   __typename?: 'Query';
-  getCurrentUser?: Maybe<Scalars['String']>;
+  getAllUsers?: Maybe<Array<User>>;
+  getCurrentUser?: Maybe<User>;
 };
 
 export type RegisterUserInput = {
@@ -87,14 +101,18 @@ export type RegisterUserInput = {
 
 export type User = {
   __typename?: 'User';
+  _id: Scalars['String'];
   authType: AuthType;
+  communities: Array<Community>;
+  createdAt: Scalars['DateTime'];
   email: Scalars['String'];
   isActive: Scalars['Boolean'];
   isVerified: Scalars['Boolean'];
+  karma: Scalars['String'];
   posts?: Maybe<Array<Post>>;
-  profilePicUrn: Scalars['String'];
-  profileUrl: Scalars['String'];
-  userId: Scalars['String'];
+  profilePicUrn?: Maybe<Scalars['String']>;
+  profileUrl?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
   username: Scalars['String'];
   votes?: Maybe<Array<Vote>>;
 };
@@ -107,10 +125,13 @@ export type UserResponse = {
 
 export type Vote = {
   __typename?: 'Vote';
+  _id: Scalars['String'];
   comment: Comment;
+  createdAt: Scalars['DateTime'];
   post: Post;
+  updatedAt: Scalars['DateTime'];
   user: User;
-  username: Scalars['String'];
+  userId: Scalars['String'];
   voteType: VoteType;
 };
 
@@ -118,6 +139,13 @@ export type Vote = {
 export enum AuthType {
   EmailAndPassword = 'EMAIL_AND_PASSWORD',
   Google = 'GOOGLE'
+}
+
+/** Type of the community */
+export enum CommunityType {
+  Private = 'PRIVATE',
+  Public = 'PUBLIC',
+  Restricted = 'RESTRICTED'
 }
 
 /** Type of the vote */
@@ -131,22 +159,24 @@ export type CreateUserMutationVariables = Exact<{
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'UserResponse', user?: { __typename?: 'User', userId: string, email: string, username: string, authType: AuthType } | null, errors?: Array<{ __typename?: 'ErrorResponse', field?: string | null, statusCode: string, message: string }> | null } };
+export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'UserResponse', user?: { __typename?: 'User', _id: string, email: string, username: string, authType: AuthType, profilePicUrn?: string | null, profileUrl?: string | null } | null, errors?: Array<{ __typename?: 'ErrorResponse', field?: string | null, statusCode: string, message: string }> | null } };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', getCurrentUser?: string | null };
+export type GetCurrentUserQuery = { __typename?: 'Query', getCurrentUser?: { __typename?: 'User', _id: string, email: string, username: string, authType: AuthType, profilePicUrn?: string | null, profileUrl?: string | null } | null };
 
 
 export const CreateUserDocument = gql`
     mutation CreateUser($data: RegisterUserInput!) {
   createUser(data: $data) {
     user {
-      userId
+      _id
       email
       username
       authType
+      profilePicUrn
+      profileUrl
     }
     errors {
       field
@@ -184,7 +214,14 @@ export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
 export const GetCurrentUserDocument = gql`
     query GetCurrentUser {
-  getCurrentUser
+  getCurrentUser {
+    _id
+    email
+    username
+    authType
+    profilePicUrn
+    profileUrl
+  }
 }
     `;
 

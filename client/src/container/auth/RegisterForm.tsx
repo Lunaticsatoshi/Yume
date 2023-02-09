@@ -1,8 +1,9 @@
 import { FC, FormEvent, useState } from 'react';
 import {
   GoogleAuthProvider,
-  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithEmailAndPassword,
 } from 'firebase/auth';
 
 import { auth } from 'src/utils/firebaseClient';
@@ -34,8 +35,7 @@ const RegisterForm: FC<RegisterFormProps> = ({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
-      await signInWithEmailAndPassword(auth, email, password);
-
+      await createUserWithEmailAndPassword(auth, email, password);
       await registerUser({
         variables: {
           data: {
@@ -46,6 +46,8 @@ const RegisterForm: FC<RegisterFormProps> = ({
           }
         }
       });
+
+      await signInWithEmailAndPassword(auth, email, password);
       onSubmit?.();
     } catch (err: any) {
       console.log(err);

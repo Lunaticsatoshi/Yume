@@ -1,10 +1,12 @@
 mutation CreateUser($data: RegisterUserInput!) {
   createUser(data: $data) {
     user {
-      userId
+      _id
       email
       username
       authType
+      profilePicUrn
+      profileUrl
     }
     errors {
       field
