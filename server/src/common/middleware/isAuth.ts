@@ -17,7 +17,7 @@ export const isAuth: MiddlewareFn<RequestContext> = async ({ context }, next) =>
     const payload = await parseFirebaseToken(authorization, mimicId);
 
     // eslint-disable-next-line require-atomic-updates
-    context.payload = payload as any;
+    context.user = payload as any;
   } catch (err) {
     console.log(err);
     throw new Error("not authenticated");

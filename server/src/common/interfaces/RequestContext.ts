@@ -3,11 +3,11 @@ import { Request, Response } from 'express';
 export type RequestContext = {
   req: Request;
   res: Response;
-  payload: any;
+  user: IRequestContextUser;
 };
 
 export interface IRequestContextUser {
   uid: string;
   email: string;
-  view: string;
+  id: string
 }
