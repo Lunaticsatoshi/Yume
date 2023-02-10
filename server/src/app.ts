@@ -6,9 +6,9 @@ const app: Application = express();
 
 app.use(
   cors({
-    origin: '*',
+    origin: process.env.CORS_ORIGIN,
     maxAge: 86400,
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-mimic-user-id'],
     exposedHeaders: [
       'access-token',
       'refresh-token',
