@@ -28,7 +28,7 @@ const Layout: FC<LayoutProps> = ({
       <AuthModalContextProvider>
         <div className="relative">
           <Navbar />
-          <div className="main-content flex justify-between h-full bg-gray-100 dark:bg-black-900">
+          <div className="main-content flex flex-col h-screen bg-gray-100 dark:bg-black-900">
             {children}
           </div>
         </div>
