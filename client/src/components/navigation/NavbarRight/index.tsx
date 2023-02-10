@@ -1,6 +1,7 @@
-import React, { FC, Fragment } from 'react';
-import Link from 'next/link';
+import React, { FC } from 'react';
+
 import AuthModal from 'src/components/ui/modal/AuthModal';
+import { User } from 'src/generated/graphql';
 import AuthButtons from './AuthButtons';
 import ActionIcons from './ActionIcons';
 import ProfileMenu from './ProfileMenu';
@@ -8,9 +9,10 @@ import ProfileMenu from './ProfileMenu';
 interface INavbarRightProps {
   loading: boolean;
   isAuthenticated: boolean;
+  user: Partial<User>;
 }
 
-const NavbarRight: FC<INavbarRightProps> = ({ loading, isAuthenticated }) => {
+const NavbarRight: FC<INavbarRightProps> = ({ loading, isAuthenticated, user }) => {
   return (
     <>
       <AuthModal />
@@ -22,7 +24,7 @@ const NavbarRight: FC<INavbarRightProps> = ({ loading, isAuthenticated }) => {
           ) : (
             <AuthButtons />
           ))}
-          <ProfileMenu isAuthenticated={isAuthenticated} />
+          <ProfileMenu isAuthenticated={isAuthenticated} user={user} />
       </div>
     </>
   );

@@ -14,7 +14,7 @@ const Navbar: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-  const { isAuthenticated } = useAuthState();
+  const { isAuthenticated, user } = useAuthState();
 
 //   const searchSubs = async () => {
 //     clearTimeout(timer);
@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
       {/* Search Input */}
       <SearchInput onChange={() => {}} />
       {/* Auth buttons */}
-      <NavbarRight loading={loading} isAuthenticated={isAuthenticated} />
+      <NavbarRight loading={loading} isAuthenticated={isAuthenticated} user={user} />
     </div>
   );
 };

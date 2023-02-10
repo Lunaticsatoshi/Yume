@@ -3,18 +3,19 @@ import { RedditLogo, Sparkle, CaretDown, User } from 'phosphor-react';
 import { Menu, MenuButton, MenuList } from '@chakra-ui/react';
 
 import { AuthModalContext } from 'src/contexts';
+import { User as CurrentUser } from 'src/generated/graphql';
 
 import NoUserMenu from './NoUserMenu';
 import UserMenu from './UserMenu';
 
 type ProfileMenuProps = {
   isAuthenticated: boolean;
+  user: Partial<CurrentUser>;
 };
 
-const ProfileMenu: React.FC<ProfileMenuProps> = ({ isAuthenticated }) => {
+const ProfileMenu: React.FC<ProfileMenuProps> = ({ isAuthenticated, user }) => {
   const { state: modalState, dispatch: setModalState } =
     useContext(AuthModalContext);
-  const user = {};
   return (
     <Menu>
       <MenuButton
@@ -27,12 +28,11 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isAuthenticated }) => {
                 <RedditLogo size={24} className="text-gray-300 mr-1" />
                 <div className="hidden md:flex flex-col items-start mr-8 text-sm">
                   <div className="font-700 ml-1">
-                    username
-                    {/* {user?.displayName || user?.email?.split("@")[0]} */}
+                    {user?.username || user?.email?.split("@")[0]}
                   </div>
                   <div className="flex items-center">
                     <Sparkle className="text-red-700 mr-2" size={12} />
-                    <div className="text-gray-300">1 karma</div>
+                    <div className="text-gray-300">{user?.karma || "0"}</div>
                   </div>
                 </div>
               </div>
