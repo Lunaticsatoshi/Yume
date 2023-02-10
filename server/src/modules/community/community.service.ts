@@ -10,8 +10,9 @@ import { ErrorResponse } from '../../common/objects/error';
 import { createDataSource } from '../../common/utils/dataSource';
 import { getUserRepository } from '../user/user.service';
 import { getMemberRepository } from '../member/member.service';
-import { Community } from '../../entities/CommunityModel';
+import { Community, CommunityType } from '../../entities/CommunityModel';
 import { MemberType } from './../../entities/MemberModel';
+import { Not } from 'typeorm';
 
 export const getCommunityRepository = async () => {
   const dataSource = await createDataSource();
@@ -41,13 +42,24 @@ const validateCreateCommunityInput = (
 export const getCommunities = async () => {
   const communityRepository = await getCommunityRepository();
 
-  return await communityRepository.find();
+  return await communityRepository
+    .createQueryBuilder('community')
+    .where('community.communityType NOT IN  (:...communityType)', {
+      communityType: [CommunityType.PRIVATE, CommunityType.RESTRICTED],
+    })
+    .getMany();
 };
 
 export const getCommunityByName = async (name: string) => {
   const communityRepository = await getCommunityRepository();
 
-  return await communityRepository.findOne({ where: { name }, relations: ['creator', 'members'] });
+  return await communityRepository
+    .createQueryBuilder('community')
+    .where('name = :name', { name })
+    .orWhere('community.communityType NOT IN  (:...communityType)', {
+      communityType: [CommunityType.PRIVATE, CommunityType.RESTRICTED],
+    })
+    .getOne();
 };
 
 export const getCommunitiesCreatedByUser = async (userId: string) => {
@@ -68,6 +80,9 @@ export const getCommunityDataByCommunityName = async (name: string) => {
     .where('community.name = :name', { name })
     .andWhere('member.memberType = :memberType', {
       memberType: MemberType.MODERATOR,
+    })
+    .andWhere('community.communityType NOT IN  (:...communityType)', {
+      communityType: [CommunityType.PRIVATE, CommunityType.RESTRICTED],
     })
     .getOne();
 };
@@ -104,7 +119,7 @@ export const createCommunity = async (
 
   const user = await userRepository.findOneByOrFail({ _id: userId });
 
-  console.log("Creating community", { user });
+  console.log('Creating community', { user });
 
   const createdCommunity = communityRepository.create({
     name,
@@ -112,7 +127,7 @@ export const createCommunity = async (
     communityType,
     username: user.username,
     creator: user,
-    members: [user]
+    members: [user],
   });
 
   await communityRepository.save(createdCommunity);
@@ -122,7 +137,12 @@ export const createCommunity = async (
     { memberType: MemberType.MODERATOR },
   );
 
-  console.log(await memberRepository.findOneByOrFail({ userId: user._id, communityId: createdCommunity._id }));
+  console.log(
+    await memberRepository.findOneByOrFail({
+      userId: user._id,
+      communityId: createdCommunity._id,
+    }),
+  );
 
   return {
     community: createdCommunity,

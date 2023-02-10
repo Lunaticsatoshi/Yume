@@ -68,6 +68,7 @@ export class CommunityResolver {
 
       return users;
     } catch (error) {
+      console.log("Error getting communities", { error, name });
       throw new GraphQLError(error.message);
     }
   }
@@ -83,6 +84,7 @@ export class CommunityResolver {
 
       return community;
     } catch (error) {
+      console.log("Error getting community data by name", { error, name });
       switch (error.message) {
         case CommunityErrors.GetCommunity:
           throw new GraphQLError(CommunityErrors.GetCommunity);
@@ -122,6 +124,7 @@ export class CommunityResolver {
 
       return updatedData;
     } catch (error) {
+      console.log("Unable to update community", { error, name });
       switch (error.message) {
         case CommunityErrors.NotCommunityCreator:
           throw new GraphQLError(CommunityErrors.NotCommunityCreator);
@@ -143,6 +146,7 @@ export class CommunityResolver {
 
       return updatedData;
     } catch (error) {
+      console.log("Unable to join community", { error, name });
       switch (error.message) {
         case CommunityErrors.AlreadyInCommunity:
           throw new GraphQLError(CommunityErrors.AlreadyInCommunity);
@@ -159,11 +163,12 @@ export class CommunityResolver {
     @Ctx() { user }: RequestContext,
   ): Promise<Community> {
     try {
-      console.log('Joining community', { user, communityId });
+      console.log('leaving community', { user, communityId });
       const updatedData = await leaveCommunity(communityId, user.id);
 
       return updatedData;
     } catch (error) {
+      console.log("Unable to leave community", { error, name });
       switch (error.message) {
         case CommunityErrors.NotInCommunity:
           throw new GraphQLError(CommunityErrors.NotInCommunity);
@@ -188,6 +193,7 @@ export class CommunityResolver {
         message: 'Successfully deleted the community',
       };
     } catch (error) {
+      console.log("Unable to delete community", { error, name });
       switch (error.message) {
         case CommunityErrors.NotCommunityCreator:
           throw new GraphQLError(CommunityErrors.NotCommunityCreator);
