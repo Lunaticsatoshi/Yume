@@ -47,6 +47,7 @@ export class CommunityResolver {
 
       return community;
     } catch (error) {
+      console.log("Error getting community by name", { error, name });
       switch (error.message) {
         case CommunityErrors.GetCommunity:
           throw new GraphQLError(CommunityErrors.GetCommunity);
@@ -103,6 +104,7 @@ export class CommunityResolver {
 
       return createdData;
     } catch (error) {
+      console.log("Unable to create community", { error });
       throw new GraphQLError(CommunityErrors.CreateCommunity);
     }
   }

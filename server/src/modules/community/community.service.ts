@@ -9,6 +9,7 @@ import {
 import { ErrorResponse } from '../../common/objects/error';
 import { createDataSource } from '../../common/utils/dataSource';
 import { getUserRepository } from '../user/user.service';
+import { getMemberRepository } from '../member/member.service';
 import { Community } from '../../entities/CommunityModel';
 import { MemberType } from './../../entities/MemberModel';
 
@@ -46,7 +47,7 @@ export const getCommunities = async () => {
 export const getCommunityByName = async (name: string) => {
   const communityRepository = await getCommunityRepository();
 
-  return await communityRepository.findOne({ where: { name } });
+  return await communityRepository.findOne({ where: { name }, relations: ['creator', 'members'] });
 };
 
 export const getCommunitiesCreatedByUser = async (userId: string) => {
@@ -77,6 +78,7 @@ export const createCommunity = async (
 ): Promise<CreateCommunityResponse> => {
   const communityRepository = await getCommunityRepository();
   const userRepository = await getUserRepository();
+  const memberRepository = await getMemberRepository();
   const errors: ErrorResponse[] = [];
 
   validateCreateCommunityInput({ name, title, communityType }, errors);
@@ -102,14 +104,25 @@ export const createCommunity = async (
 
   const user = await userRepository.findOneByOrFail({ _id: userId });
 
+  console.log("Creating community", { user });
+
   const createdCommunity = communityRepository.create({
     name,
     title,
     communityType,
+    username: user.username,
     creator: user,
+    members: [user]
   });
 
   await communityRepository.save(createdCommunity);
+
+  await memberRepository.update(
+    { userId: user._id, communityId: createdCommunity._id },
+    { memberType: MemberType.MODERATOR },
+  );
+
+  console.log(await memberRepository.findOneByOrFail({ userId: user._id, communityId: createdCommunity._id }));
 
   return {
     community: createdCommunity,
