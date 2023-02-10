@@ -12,7 +12,6 @@ import { getUserRepository } from '../user/user.service';
 import { getMemberRepository } from '../member/member.service';
 import { Community, CommunityType } from '../../entities/CommunityModel';
 import { MemberType } from './../../entities/MemberModel';
-import { Not } from 'typeorm';
 
 export const getCommunityRepository = async () => {
   const dataSource = await createDataSource();
