@@ -34,15 +34,33 @@ export const getUsers = async () => {
 };
 
 export const getUserById = async (userId: string) => {
-  return await User.findOne({ where: { _id: userId } });
+  const userRepository = await getUserRepository();
+
+  return await userRepository
+    .createQueryBuilder('user')
+    .leftJoinAndSelect('user.communities', 'communities')
+    .where('user._id = :_id', { _id: userId })
+    .getOne();
 };
 
 export const getUserByEmail = async (email: string) => {
-  return await User.findOne({ where: { email } });
+  const userRepository = await getUserRepository();
+
+  return await userRepository
+  .createQueryBuilder('user')
+  .leftJoinAndSelect('user.communities', 'communities')
+  .where('user.email = :email', { email })
+  .getOne();
 };
 
 export const getUserByUsername = async (username: string) => {
-  return await User.findOne({ where: { username } });
+  const userRepository = await getUserRepository();
+
+  return await userRepository
+  .createQueryBuilder('user')
+  .leftJoinAndSelect('user.communities', 'communities')
+  .where('user.username = :username', { username })
+  .getOne();
 };
 
 export const createUser = async ({
@@ -123,13 +141,20 @@ export const createUser = async ({
   }
 };
 
-export const updateUser = async (_id: string, data: Partial<User>) => {
+export const updateUser = async (userId: string, data: Partial<User>) => {
   const dataSource = await createDataSource();
   const userRepository = dataSource.getRepository(User);
 
-  const user = await userRepository.findOneOrFail({ where: { _id } });
+  await userRepository.update({ _id: userId }, { ...data });
 
-  userRepository.merge(user, { ...data });
+  const updatedUser = await userRepository.findOneOrFail({ where: { _id: userId } });
 
-  return await userRepository.save(user);
+  return updatedUser;
+};
+
+export const deleteUser = async (userId: string) => {
+  const dataSource = await createDataSource();
+  const userRepository = dataSource.getRepository(User);
+
+  await userRepository.delete({ _id: userId });
 };
