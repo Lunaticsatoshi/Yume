@@ -55,7 +55,7 @@ export const getCommunityByName = async (name: string) => {
   return await communityRepository
     .createQueryBuilder('community')
     .where('name = :name', { name })
-    .orWhere('community.communityType NOT IN  (:...communityType)', {
+    .andWhere('community.communityType NOT IN  (:...communityType)', {
       communityType: [CommunityType.PRIVATE, CommunityType.RESTRICTED],
     })
     .getOne();
@@ -74,12 +74,9 @@ export const getCommunityDataByCommunityName = async (name: string) => {
 
   return await communityRepository
     .createQueryBuilder('community')
-    .leftJoinAndSelect('community.posts', 'post')
-    .leftJoinAndSelect('community.members', 'member')
+    .leftJoinAndSelect('community.posts', 'posts')
+    .leftJoinAndSelect('community.members', 'members')
     .where('community.name = :name', { name })
-    .andWhere('member.memberType = :memberType', {
-      memberType: MemberType.MODERATOR,
-    })
     .andWhere('community.communityType NOT IN  (:...communityType)', {
       communityType: [CommunityType.PRIVATE, CommunityType.RESTRICTED],
     })

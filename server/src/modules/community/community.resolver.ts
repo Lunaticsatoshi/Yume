@@ -39,6 +39,7 @@ export class CommunityResolver {
   @Query(() => Community)
   async getCommunityByName(@Arg('name') name: string): Promise<Community> {
     try {
+      console.log('Getting community by name', { name });
       const community = await getCommunityByName(name);
 
       if (!community) {
@@ -60,13 +61,14 @@ export class CommunityResolver {
   @Query(() => [Community], { nullable: true })
   async getCommunities(): Promise<Community[]> {
     try {
-      const users = await getCommunities();
+      console.log('Getting all communities');
+      const communities = await getCommunities();
 
-      if (!users || users.length < 0) {
+      if (!communities || communities.length < 0) {
         throw new Error('Error: communities not found!');
       }
 
-      return users;
+      return communities;
     } catch (error) {
       console.log("Error getting communities", { error, name });
       throw new GraphQLError(error.message);
@@ -76,6 +78,7 @@ export class CommunityResolver {
   @Query(() => Community)
   async getCommunityDataByName(@Arg('name') name: string): Promise<Community> {
     try {
+      console.log('Getting community data by name', { name });
       const community = await getCommunityDataByCommunityName(name);
 
       if (!community) {
