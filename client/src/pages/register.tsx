@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { RegisterForm } from 'src/container';
 
-function Register() {
+const Register = () => {
   //   const router = useRouter();
   //   if (authenticated) router.push('/');
 
@@ -59,6 +59,6 @@ function Register() {
       </div>
     </div>
   );
-}
+};
 
 export default Register;

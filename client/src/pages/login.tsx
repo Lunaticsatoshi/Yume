@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { withAuthUser, AuthAction } from 'next-firebase-auth';
 import { LoginForm } from 'src/container';
 
-function Login() {
+const Login = () => {
   return (
     <div className="flex bg-white">
       <Head>
@@ -34,7 +34,7 @@ function Login() {
       </div>
     </div>
   );
-}
+};
 
 export default withAuthUser({
   whenAuthed: AuthAction.REDIRECT_TO_APP,
