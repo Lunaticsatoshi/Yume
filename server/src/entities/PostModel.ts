@@ -74,6 +74,9 @@ export class Post extends BaseModel {
   @Column({ default: 0 })
   commentCount: number;
 
+  @Field({ nullable: true })
+  imageUrl: string;
+
   @Field()
   url: string;
 

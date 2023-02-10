@@ -61,7 +61,7 @@ export class Community extends BaseModel {
   @JoinColumn({ name: 'userId', referencedColumnName: '_id' })
   creator: User;
 
-  @Field(() => [User])
+  @Field(() => [User], { nullable: true })
   @ManyToMany(() => User, (user) => user.communities, { cascade: true })
   @JoinTable({ name: 'members' })
   members: User[];
@@ -70,9 +70,9 @@ export class Community extends BaseModel {
   @OneToMany(() => Post, (post) => post.community)
   posts: Post[];
 
-  @Field()
-  imageUrl: string;
+  @Field({ nullable: true })
+  imageUrl?: string;
 
-  @Field()
-  bannerUrl: string;
+  @Field({ nullable: true })
+  bannerUrl?: string;
 }

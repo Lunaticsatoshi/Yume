@@ -5,6 +5,8 @@ import {
   Mutation,
   Arg,
   UseMiddleware,
+  FieldResolver,
+  Root,
 } from 'type-graphql';
 import { GraphQLError } from 'graphql';
 
@@ -190,6 +192,36 @@ export class CommunityResolver {
         default:
           throw new GraphQLError(CommunityErrors.DeleteCommunity);
       }
+    }
+  }
+
+  @FieldResolver(() => String)
+  imageUrl(@Root() community: Community): string | null {
+    try {
+      if (!community.imageUrn) {
+        return null;
+      }
+
+      return community.imageUrn;
+    } catch (error) {
+      console.error('Error resolving community profile pic: ', { error });
+
+      return null;
+    }
+  }
+
+  @FieldResolver(() => String)
+  bannerUrl(@Root() community: Community): string | null {
+    try {
+      if (!community.bannerUrn) {
+        return null;
+      }
+
+      return community.bannerUrn;
+    } catch (error) {
+      console.error('Error resolving profile pic: ', { error });
+
+      return null;
     }
   }
 }
