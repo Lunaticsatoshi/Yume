@@ -1,4 +1,11 @@
-import { Entity, Column, Index, OneToMany, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  Index,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { IsEmail, Length } from 'class-validator';
 import { Field, ObjectType, registerEnumType } from 'type-graphql';
 
@@ -37,7 +44,11 @@ export class User extends BaseModel {
   password?: string;
 
   @Field(() => AUTH_TYPE)
-  @Column({ type: "enum", default: AUTH_TYPE.EMAIL_AND_PASSWORD, enum: AUTH_TYPE })
+  @Column({
+    type: 'enum',
+    default: AUTH_TYPE.EMAIL_AND_PASSWORD,
+    enum: AUTH_TYPE,
+  })
   authType: AUTH_TYPE;
 
   @Field({ nullable: true })
@@ -45,7 +56,7 @@ export class User extends BaseModel {
   profilePicUrn?: string;
 
   @Field()
-  @Column({ default: "0" })
+  @Column({ default: '0' })
   karma: string;
 
   @Field({
@@ -70,7 +81,12 @@ export class User extends BaseModel {
   @OneToMany(() => Vote, (vote) => vote.user)
   votes: Vote[];
 
-  @Field(() => [Community])
-  @ManyToMany(() => Community, (community) => community.members)
+  @Field(() => [Community], { nullable: true })
+  @ManyToMany(() => Community, (community) => community.members, { cascade: true })
+  @JoinTable({
+    name: 'members',
+    joinColumn: { name: 'userId', referencedColumnName: '_id' },
+    inverseJoinColumn: { name: 'communityId', referencedColumnName: '_id' },
+  })
   communities: Community[];
 }

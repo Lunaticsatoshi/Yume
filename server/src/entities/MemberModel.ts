@@ -1,13 +1,17 @@
-import { Entity, Column, JoinColumn, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Field, ObjectType, registerEnumType } from 'type-graphql';
-
-import BaseModel from './BaseModel';
-import { User } from './UserModel';
-import { Community } from './CommunityModel';
 
 export enum MemberType {
   MODERATOR = 'MODERATOR',
-  MEMBER = 'MEMBER'
+  MEMBER = 'MEMBER',
 }
 
 registerEnumType(MemberType, {
@@ -17,26 +21,27 @@ registerEnumType(MemberType, {
 
 @ObjectType()
 @Entity('members')
-export class Member extends BaseModel {
+export class Member extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Field(() => MemberType)
   @Column({ default: MemberType.MEMBER })
   memberType: MemberType;
 
   @Field()
-  @Column()
+  @PrimaryColumn({ type: 'uuid' })
   userId: string;
 
   @Field()
-  @Column()
-  name: string;
+  @PrimaryColumn({ type: 'uuid' })
+  communityId: string;
 
-  @Field(() => User)
-  @OneToOne(() => User)
-  @JoinColumn({ name: 'userId', referencedColumnName: '_id' })
-  user: User;
+  @Field()
+  @CreateDateColumn()
+  createdAt: Date;
 
-  @Field(() => Community)
-  @OneToOne(() => Community)
-  @JoinColumn({ name: 'communityName', referencedColumnName: 'name' })
-  community: Community;
+  @Field()
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

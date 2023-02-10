@@ -36,10 +36,6 @@ export class Post extends BaseModel {
   @Column({ nullable: true, type: 'text' })
   body: string;
 
-  @Field()
-  @Column()
-  communityName: string;
-
   @Field({ nullable: true })
   @Column({ nullable: true })
   imageUrn: string;
@@ -48,6 +44,10 @@ export class Post extends BaseModel {
   @Column()
   userId: string;
 
+  @Field()
+  @Column()
+  communityId: string;
+
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'userId', referencedColumnName: '_id' })
@@ -55,7 +55,7 @@ export class Post extends BaseModel {
 
   @Field(() => Community)
   @ManyToOne(() => Community, (community) => community.posts, { onDelete: "CASCADE" })
-  @JoinColumn({ name: 'communityName', referencedColumnName: 'name' })
+  @JoinColumn({ name: 'communityId', referencedColumnName: '_id' })
   community: Community;
 
   @Field(() => [Comment])

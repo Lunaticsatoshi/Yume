@@ -6,7 +6,6 @@ import {
   JoinColumn,
   OneToMany,
   ManyToMany,
-  JoinTable,
 } from 'typeorm';
 import { Field, ObjectType, registerEnumType } from "type-graphql";
 
@@ -56,14 +55,16 @@ export class Community extends BaseModel {
   @Column()
   userId: string;
 
+  @Column()
+  username: string;
+
   @Field(() => User)
   @ManyToOne(() => User, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'userId', referencedColumnName: '_id' })
   creator: User;
 
   @Field(() => [User], { nullable: true })
-  @ManyToMany(() => User, (user) => user.communities, { cascade: true })
-  @JoinTable({ name: 'members' })
+  @ManyToMany(() => User, (user) => user.communities, { onDelete: "CASCADE" })
   members: User[];
 
   @Field(() => [Post], { nullable: true })
