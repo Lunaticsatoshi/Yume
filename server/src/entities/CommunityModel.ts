@@ -76,4 +76,7 @@ export class Community extends BaseModel {
 
   @Field({ nullable: true })
   bannerUrl?: string;
+
+  @Field({ defaultValue: false })
+  isCreator: boolean;
 }
