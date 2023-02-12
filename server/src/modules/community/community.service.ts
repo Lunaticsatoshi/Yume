@@ -1,10 +1,12 @@
-import { CommunityErrors } from './../../common/enums/errors.enum';
+import { IRequestContextUser } from './../../common/interfaces/RequestContext';
+import { CommunityErrors, AuthErrors } from './../../common/enums/errors.enum';
 import { isEmpty } from 'class-validator';
 
 import {
   CreateCommunityInput,
   CreateCommunityResponse,
   UpdateCommunityInput,
+  GetCommunityDataResponse,
 } from './community.interface';
 import { ErrorResponse } from '../../common/objects/error';
 import { createDataSource } from '../../common/utils/dataSource';
@@ -49,28 +51,35 @@ export const getCommunities = async () => {
     .getMany();
 };
 
-export const getCommunityByName = async (name: string, userId?: string) => {
+export const getCommunityByName = async (
+  name: string,
+  user: IRequestContextUser,
+): Promise<GetCommunityDataResponse> => {
   const communityRepository = await getCommunityRepository();
 
-  if (userId) {
-    return await communityRepository
-      .createQueryBuilder('community')
-      .innerJoinAndSelect('community.members', 'member')
-      .where('name = :name', { name })
-      .andWhere('community.communityType NOT IN  (:...communityType)', {
-        communityType: [CommunityType.PRIVATE],
-      })
-      .orWhere('member._id = :id', { id: userId })
-      .getOne();
+  const community = await communityRepository
+    .createQueryBuilder('community')
+    .innerJoinAndSelect('community.members', 'member')
+    .where('name = :name', { name })
+    .getOne();
+
+  if (!community) {
+    throw new Error(CommunityErrors.GetCommunity);
   }
 
-  return await communityRepository
-    .createQueryBuilder('community')
-    .where('name = :name', { name })
-    .andWhere('community.communityType NOT IN  (:...communityType)', {
-      communityType: [CommunityType.PRIVATE],
-    })
-    .getOne();
+  const isUserMember = Boolean(
+    community.members.find((member) => member._id === user.id),
+  );
+
+  if(community.communityType === CommunityType.PRIVATE && (!isUserMember || community.userId !== user.id)) {
+    throw new Error(AuthErrors.NotAuthorized);
+  }
+
+  return {
+    community,
+    memberCount: community.members.length.toString(),
+    isMember: isUserMember,
+  };
 };
 
 export const getCommunitiesCreatedByUser = async (userId: string) => {
@@ -189,7 +198,7 @@ export const joinCommunity = async (communityId: string, userId: string) => {
   const user = await userRepository.findOneByOrFail({ _id: userId });
   const community = await communityRepository.findOneOrFail({
     where: { _id: communityId },
-    relations: ['members']
+    relations: ['members'],
   });
 
   if (community.members.includes(user)) {
@@ -205,7 +214,7 @@ export const leaveCommunity = async (communityId: string, userId: string) => {
   const communityRepository = await getCommunityRepository();
   const community = await communityRepository.findOneOrFail({
     where: { _id: communityId },
-    relations: ['members']
+    relations: ['members'],
   });
 
   if (!community.members.find((member) => member._id === userId)) {

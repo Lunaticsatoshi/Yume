@@ -2,6 +2,10 @@ export enum GeneralErrors {
   SERVER = 'Error: something went wrong',
 }
 
+export enum AuthErrors {
+  NotAuthorized = 'Error: you are not authorized to view this page',
+}
+
 export enum UserErrors {
   GetUser = 'Error: user not found',
   GetUsers = 'Error: cannot get user list',

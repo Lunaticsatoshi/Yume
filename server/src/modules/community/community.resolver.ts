@@ -11,6 +11,7 @@ import {
 import { GraphQLError } from 'graphql';
 
 import {
+  AuthErrors,
   CommunityErrors,
   GeneralErrors,
 } from './../../common/enums/errors.enum';
@@ -60,34 +61,16 @@ export class CommunityResolver {
     @Ctx() { user }: RequestContext,
   ): Promise<GetCommunityDataResponse> {
     try {
-      let community: Community | null = null;
+      const communityResponse = await getCommunityByName(name, user);
 
-      if (user.id) {
-        console.log('Getting community by name for auth user', { name, user });
-        community = await getCommunityByName(name, user.id);
-      } else {
-        console.log('Getting community by name', { name });
-        community = await getCommunityByName(name);
-      }
-
-      if (!community) {
-        throw new Error(CommunityErrors.GetCommunity);
-      }
-
-      const isUserMember = Boolean(
-        community.members.find((member) => member._id === user.id),
-      );
-
-      return {
-        community,
-        memberCount: community.members.length.toString(),
-        isMember: isUserMember,
-      };
+      return communityResponse;
     } catch (error) {
       console.log('Error getting community data by name', { error, name });
       switch (error.message) {
         case CommunityErrors.GetCommunity:
           throw new GraphQLError(CommunityErrors.GetCommunity);
+          case AuthErrors.NotAuthorized:
+            throw new GraphQLError(AuthErrors.NotAuthorized);
         default:
           throw new GraphQLError(GeneralErrors.SERVER);
       }
