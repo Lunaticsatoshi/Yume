@@ -37,8 +37,8 @@ export class CreateCommunityResponse {
 
 @ObjectType()
 export class GetCommunityDataResponse {
-  @Field(() => Community, { nullable: true })
-  community?: Community | null;
+  @Field(() => Community)
+  community: Community | null;
 
   @Field({ defaultValue: "0" })
   memberCount: string;
