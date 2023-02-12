@@ -161,19 +161,8 @@ export const updateCommunity = async (
   communityId: string,
   userId: string,
   data: UpdateCommunityInput,
-): Promise<CreateCommunityResponse> => {
+): Promise<Community> => {
   const communityRepository = await getCommunityRepository();
-
-  if (data.title && isEmpty(data.title)) {
-    return {
-      errors: [
-        {
-          field: 'title',
-          message: 'Community title cannot be empty',
-        },
-      ],
-    };
-  }
 
   const communityToUpdate = await communityRepository.findOneOrFail({
     where: { _id: communityId, creator: { _id: userId } },
@@ -189,17 +178,14 @@ export const updateCommunity = async (
     where: { _id: communityId },
   });
 
-  return {
-    community: updatedCommunity,
-    errors: [],
-  };
+  return updatedCommunity;
 };
 
 export const updateCommunityProfile = async (
   communityId: string,
   userId: string,
   data: UpdateCommunityProfile,
-): Promise<CreateCommunityResponse> => {
+): Promise<Community> => {
   const communityRepository = await getCommunityRepository();
 
   const communityToUpdate = await communityRepository.findOneOrFail({
@@ -216,10 +202,7 @@ export const updateCommunityProfile = async (
     where: { _id: communityId },
   });
 
-  return {
-    community: updatedCommunity,
-    errors: [],
-  };
+  return updatedCommunity;
 };
 
 export const joinCommunity = async (communityId: string, userId: string) => {

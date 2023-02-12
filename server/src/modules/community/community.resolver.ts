@@ -97,13 +97,13 @@ export class CommunityResolver {
     }
   }
 
-  @Mutation(() => CreateCommunityResponse)
+  @Mutation(() => Community)
   @UseMiddleware(isStrictAuth)
   async updateCommunity(
     @Arg('communityId') communityId: string,
     @Arg('data') data: UpdateCommunityInput,
     @Ctx() { user }: RequestContext,
-  ): Promise<CreateCommunityResponse> {
+  ): Promise<Community> {
     try {
       console.log('Updating community', { user, data });
       const updatedData = await updateCommunity(communityId, user.id, data);
@@ -120,13 +120,13 @@ export class CommunityResolver {
     }
   }
 
-  @Mutation(() => CreateCommunityResponse)
+  @Mutation(() => Community)
   @UseMiddleware(isStrictAuth)
   async updateCommunityProfile(
     @Arg('communityId') communityId: string,
     @Arg('data') data: UpdateCommunityProfile,
     @Ctx() { user }: RequestContext,
-  ): Promise<CreateCommunityResponse> {
+  ): Promise<Community> {
     try {
       console.log('Updating community profile', { user, data });
       const updatedData = await updateCommunityProfile(communityId, user.id, data);
