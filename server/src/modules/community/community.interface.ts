@@ -34,3 +34,15 @@ export class CreateCommunityResponse {
   @Field(() => Community, { nullable: true })
   community?: Community | null;
 }
+
+@ObjectType()
+export class GetCommunityDataResponse {
+  @Field(() => Community, { nullable: true })
+  community?: Community | null;
+
+  @Field({ defaultValue: "0" })
+  memberCount: string;
+
+  @Field({ defaultValue: false })
+  isMember: boolean;
+}

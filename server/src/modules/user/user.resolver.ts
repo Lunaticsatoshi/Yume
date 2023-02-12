@@ -13,7 +13,7 @@ import {
 import { UserErrors, GeneralErrors } from '../../common/enums/errors.enum';
 import { RequestContext } from '../../common/interfaces/RequestContext';
 import { User } from '../../entities/UserModel';
-import { isAuth } from '../../common/middleware/isAuth';
+import { isStrictAuth } from '../../common/middleware/isAuth';
 
 import { RegisterUserInput, UserResponse } from './user.interface';
 import { getUserById, getUsers, createUser } from './user.service';
@@ -22,7 +22,7 @@ import { GraphQLError } from 'graphql';
 @Resolver(User)
 export class UserResolver {
   @Query(() => User, { nullable: true })
-  @UseMiddleware(isAuth)
+  @UseMiddleware(isStrictAuth)
   async getCurrentUser(@Ctx() { user }: RequestContext): Promise<User> {
     try {
       console.log('Getting current user', { user });

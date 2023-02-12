@@ -16,12 +16,11 @@ import {
 } from './../../common/enums/errors.enum';
 import { RequestContext } from '../../common/interfaces/RequestContext';
 import { Community } from '../../entities/CommunityModel';
-import { isAuth } from '../../common/middleware/isAuth';
+import { isAuth, isStrictAuth } from '../../common/middleware/isAuth';
 import { SuccessResponse } from '../../common/objects/success';
 
 import {
   getCommunityByName,
-  getCommunityDataByCommunityName,
   getCommunities,
   createCommunity,
   updateCommunity,
@@ -32,15 +31,27 @@ import {
 import {
   CreateCommunityResponse,
   CreateCommunityInput,
+  GetCommunityDataResponse,
 } from './community.interface';
 
 @Resolver(Community)
 export class CommunityResolver {
   @Query(() => Community)
-  async getCommunityByName(@Arg('name') name: string): Promise<Community> {
+  @UseMiddleware(isAuth)
+  async getCommunityByName(
+    @Arg('name') name: string,
+    @Ctx() { user }: RequestContext,
+  ): Promise<Community> {
     try {
-      console.log('Getting community by name', { name });
-      const community = await getCommunityByName(name);
+      let community: Community | null = null;
+
+      if (user.id) {
+        console.log('Getting community by name for auth user', { name, user });
+        community = await getCommunityByName(name, user.id);
+      } else {
+        console.log('Getting community by name', { name });
+        community = await getCommunityByName(name);
+      }
 
       if (!community) {
         throw new Error(CommunityErrors.GetCommunity);
@@ -48,7 +59,7 @@ export class CommunityResolver {
 
       return community;
     } catch (error) {
-      console.log("Error getting community by name", { error, name });
+      console.log('Error getting community by name', { error, name });
       switch (error.message) {
         case CommunityErrors.GetCommunity:
           throw new GraphQLError(CommunityErrors.GetCommunity);
@@ -70,24 +81,41 @@ export class CommunityResolver {
 
       return communities;
     } catch (error) {
-      console.log("Error getting communities", { error, name });
+      console.log('Error getting communities', { error, name });
       throw new GraphQLError(error.message);
     }
   }
 
-  @Query(() => Community)
-  async getCommunityDataByName(@Arg('name') name: string): Promise<Community> {
+  @Query(() => GetCommunityDataResponse)
+  @UseMiddleware(isAuth)
+  async getCommunityDataByName(
+    @Arg('name') name: string,
+    @Ctx() { user }: RequestContext,
+  ): Promise<GetCommunityDataResponse> {
     try {
-      console.log('Getting community data by name', { name });
-      const community = await getCommunityDataByCommunityName(name);
+      let community: Community | null = null;
+
+      if (user.id) {
+        console.log('Getting community by name for auth user', { name, user });
+        community = await getCommunityByName(name, user.id);
+      } else {
+        console.log('Getting community by name', { name });
+        community = await getCommunityByName(name);
+      }
 
       if (!community) {
         throw new Error(CommunityErrors.GetCommunity);
       }
 
-      return community;
+      const isUserMember = Boolean(community.members.find((member) => member._id === user.id));
+
+      return {
+        community,
+        memberCount: community.members.length.toString(),
+        isMember: isUserMember,
+      };
     } catch (error) {
-      console.log("Error getting community data by name", { error, name });
+      console.log('Error getting community data by name', { error, name });
       switch (error.message) {
         case CommunityErrors.GetCommunity:
           throw new GraphQLError(CommunityErrors.GetCommunity);
@@ -98,7 +126,7 @@ export class CommunityResolver {
   }
 
   @Mutation(() => CreateCommunityResponse)
-  @UseMiddleware(isAuth)
+  @UseMiddleware(isStrictAuth)
   async createCommunity(
     @Arg('data') data: CreateCommunityInput,
     @Ctx() { user }: RequestContext,
@@ -109,13 +137,13 @@ export class CommunityResolver {
 
       return createdData;
     } catch (error) {
-      console.log("Unable to create community", { error });
+      console.log('Unable to create community', { error });
       throw new GraphQLError(CommunityErrors.CreateCommunity);
     }
   }
 
   @Mutation(() => CreateCommunityResponse)
-  @UseMiddleware(isAuth)
+  @UseMiddleware(isStrictAuth)
   async updateCommunity(
     @Arg('communityId') communityId: string,
     @Arg('data') data: CreateCommunityInput,
@@ -127,7 +155,7 @@ export class CommunityResolver {
 
       return updatedData;
     } catch (error) {
-      console.log("Unable to update community", { error, name });
+      console.log('Unable to update community', { error, name });
       switch (error.message) {
         case CommunityErrors.NotCommunityCreator:
           throw new GraphQLError(CommunityErrors.NotCommunityCreator);
@@ -138,7 +166,7 @@ export class CommunityResolver {
   }
 
   @Mutation(() => Community)
-  @UseMiddleware(isAuth)
+  @UseMiddleware(isStrictAuth)
   async joinCommunity(
     @Arg('communityId') communityId: string,
     @Ctx() { user }: RequestContext,
@@ -149,7 +177,7 @@ export class CommunityResolver {
 
       return updatedData;
     } catch (error) {
-      console.log("Unable to join community", { error, name });
+      console.log('Unable to join community', { error, name });
       switch (error.message) {
         case CommunityErrors.AlreadyInCommunity:
           throw new GraphQLError(CommunityErrors.AlreadyInCommunity);
@@ -160,7 +188,7 @@ export class CommunityResolver {
   }
 
   @Mutation(() => Community)
-  @UseMiddleware(isAuth)
+  @UseMiddleware(isStrictAuth)
   async leaveCommunity(
     @Arg('communityId') communityId: string,
     @Ctx() { user }: RequestContext,
@@ -171,7 +199,7 @@ export class CommunityResolver {
 
       return updatedData;
     } catch (error) {
-      console.log("Unable to leave community", { error, name });
+      console.log('Unable to leave community', { error, name });
       switch (error.message) {
         case CommunityErrors.NotInCommunity:
           throw new GraphQLError(CommunityErrors.NotInCommunity);
@@ -182,7 +210,7 @@ export class CommunityResolver {
   }
 
   @Mutation(() => SuccessResponse)
-  @UseMiddleware(isAuth)
+  @UseMiddleware(isStrictAuth)
   async deleteCommunity(
     @Arg('communityId') communityId: string,
     @Ctx() { user }: RequestContext,
@@ -196,7 +224,7 @@ export class CommunityResolver {
         message: 'Successfully deleted the community',
       };
     } catch (error) {
-      console.log("Unable to delete community", { error, name });
+      console.log('Unable to delete community', { error, name });
       switch (error.message) {
         case CommunityErrors.NotCommunityCreator:
           throw new GraphQLError(CommunityErrors.NotCommunityCreator);
@@ -230,9 +258,25 @@ export class CommunityResolver {
 
       return community.bannerUrn;
     } catch (error) {
-      console.error('Error resolving profile pic: ', { error });
+      console.error('Error resolving banner pic: ', { error });
 
       return null;
+    }
+  }
+
+  @FieldResolver(() => Boolean)
+  @UseMiddleware(isAuth)
+  isCreator(@Root() community: Community, @Ctx() { user }: RequestContext,): boolean {
+    try {
+      if (user.id && community.userId === user.id) {
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Error resolving creator: ', { error });
+
+      return false;
     }
   }
 }

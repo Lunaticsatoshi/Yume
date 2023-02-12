@@ -49,14 +49,26 @@ export const getCommunities = async () => {
     .getMany();
 };
 
-export const getCommunityByName = async (name: string) => {
+export const getCommunityByName = async (name: string, userId?: string) => {
   const communityRepository = await getCommunityRepository();
+
+  if (userId) {
+    return await communityRepository
+      .createQueryBuilder('community')
+      .innerJoinAndSelect('community.members', 'member')
+      .where('name = :name', { name })
+      .andWhere('community.communityType NOT IN  (:...communityType)', {
+        communityType: [CommunityType.PRIVATE],
+      })
+      .orWhere('member._id = :id', { id: userId })
+      .getOne();
+  }
 
   return await communityRepository
     .createQueryBuilder('community')
     .where('name = :name', { name })
     .andWhere('community.communityType NOT IN  (:...communityType)', {
-      communityType: [CommunityType.PRIVATE, CommunityType.RESTRICTED],
+      communityType: [CommunityType.PRIVATE],
     })
     .getOne();
 };
@@ -67,20 +79,6 @@ export const getCommunitiesCreatedByUser = async (userId: string) => {
   return await communityRepository.find({
     where: { creator: { _id: userId } },
   });
-};
-
-export const getCommunityDataByCommunityName = async (name: string) => {
-  const communityRepository = await getCommunityRepository();
-
-  return await communityRepository
-    .createQueryBuilder('community')
-    .leftJoinAndSelect('community.posts', 'posts')
-    .leftJoinAndSelect('community.members', 'members')
-    .where('community.name = :name', { name })
-    .andWhere('community.communityType NOT IN  (:...communityType)', {
-      communityType: [CommunityType.PRIVATE, CommunityType.RESTRICTED],
-    })
-    .getOne();
 };
 
 export const createCommunity = async (
@@ -189,8 +187,9 @@ export const joinCommunity = async (communityId: string, userId: string) => {
   const userRepository = await getUserRepository();
 
   const user = await userRepository.findOneByOrFail({ _id: userId });
-  const community = await communityRepository.findOneByOrFail({
-    _id: communityId,
+  const community = await communityRepository.findOneOrFail({
+    where: { _id: communityId },
+    relations: ['members']
   });
 
   if (community.members.includes(user)) {
@@ -204,8 +203,9 @@ export const joinCommunity = async (communityId: string, userId: string) => {
 
 export const leaveCommunity = async (communityId: string, userId: string) => {
   const communityRepository = await getCommunityRepository();
-  const community = await communityRepository.findOneByOrFail({
-    _id: communityId,
+  const community = await communityRepository.findOneOrFail({
+    where: { _id: communityId },
+    relations: ['members']
   });
 
   if (!community.members.find((member) => member._id === userId)) {
