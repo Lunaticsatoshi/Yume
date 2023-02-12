@@ -35,7 +35,7 @@ export class Community extends BaseModel {
   @Column()
   title: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
   description: string;
 
