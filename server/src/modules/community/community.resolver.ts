@@ -36,39 +36,6 @@ import {
 
 @Resolver(Community)
 export class CommunityResolver {
-  @Query(() => Community)
-  @UseMiddleware(isAuth)
-  async getCommunityByName(
-    @Arg('name') name: string,
-    @Ctx() { user }: RequestContext,
-  ): Promise<Community> {
-    try {
-      let community: Community | null = null;
-
-      if (user.id) {
-        console.log('Getting community by name for auth user', { name, user });
-        community = await getCommunityByName(name, user.id);
-      } else {
-        console.log('Getting community by name', { name });
-        community = await getCommunityByName(name);
-      }
-
-      if (!community) {
-        throw new Error(CommunityErrors.GetCommunity);
-      }
-
-      return community;
-    } catch (error) {
-      console.log('Error getting community by name', { error, name });
-      switch (error.message) {
-        case CommunityErrors.GetCommunity:
-          throw new GraphQLError(CommunityErrors.GetCommunity);
-        default:
-          throw new GraphQLError(GeneralErrors.SERVER);
-      }
-    }
-  }
-
   @Query(() => [Community], { nullable: true })
   async getCommunities(): Promise<Community[]> {
     try {
@@ -88,7 +55,7 @@ export class CommunityResolver {
 
   @Query(() => GetCommunityDataResponse)
   @UseMiddleware(isAuth)
-  async getCommunityDataByName(
+  async getCommunityByName(
     @Arg('name') name: string,
     @Ctx() { user }: RequestContext,
   ): Promise<GetCommunityDataResponse> {
@@ -107,7 +74,9 @@ export class CommunityResolver {
         throw new Error(CommunityErrors.GetCommunity);
       }
 
-      const isUserMember = Boolean(community.members.find((member) => member._id === user.id));
+      const isUserMember = Boolean(
+        community.members.find((member) => member._id === user.id),
+      );
 
       return {
         community,
@@ -266,7 +235,10 @@ export class CommunityResolver {
 
   @FieldResolver(() => Boolean)
   @UseMiddleware(isAuth)
-  isCreator(@Root() community: Community, @Ctx() { user }: RequestContext,): boolean {
+  isCreator(
+    @Root() community: Community,
+    @Ctx() { user }: RequestContext,
+  ): boolean {
     try {
       if (user.id && community.userId === user.id) {
         return true;
