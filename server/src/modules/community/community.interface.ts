@@ -26,6 +26,15 @@ export class UpdateCommunityInput {
   communityType?: CommunityType;
 }
 
+@InputType()
+export class UpdateCommunityProfile {
+  @Field({ nullable: true })
+  bannerUrn?: string;
+
+  @Field({ nullable: true })
+  imageUrn?: string;
+}
+
 @ObjectType()
 export class CreateCommunityResponse {
   @Field(() => [ErrorResponse], { nullable: true })

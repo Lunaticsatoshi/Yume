@@ -25,6 +25,7 @@ import {
   getCommunities,
   createCommunity,
   updateCommunity,
+  updateCommunityProfile,
   joinCommunity,
   leaveCommunity,
   deleteCommunity,
@@ -33,6 +34,8 @@ import {
   CreateCommunityResponse,
   CreateCommunityInput,
   GetCommunityDataResponse,
+  UpdateCommunityInput,
+  UpdateCommunityProfile,
 } from './community.interface';
 
 @Resolver(Community)
@@ -98,7 +101,7 @@ export class CommunityResolver {
   @UseMiddleware(isStrictAuth)
   async updateCommunity(
     @Arg('communityId') communityId: string,
-    @Arg('data') data: CreateCommunityInput,
+    @Arg('data') data: UpdateCommunityInput,
     @Ctx() { user }: RequestContext,
   ): Promise<CreateCommunityResponse> {
     try {
@@ -108,6 +111,29 @@ export class CommunityResolver {
       return updatedData;
     } catch (error) {
       console.log('Unable to update community', { error, name });
+      switch (error.message) {
+        case CommunityErrors.NotCommunityCreator:
+          throw new GraphQLError(CommunityErrors.NotCommunityCreator);
+        default:
+          throw new GraphQLError(CommunityErrors.UpdateCommunity);
+      }
+    }
+  }
+
+  @Mutation(() => CreateCommunityResponse)
+  @UseMiddleware(isStrictAuth)
+  async updateCommunityProfile(
+    @Arg('communityId') communityId: string,
+    @Arg('data') data: UpdateCommunityProfile,
+    @Ctx() { user }: RequestContext,
+  ): Promise<CreateCommunityResponse> {
+    try {
+      console.log('Updating community profile', { user, data });
+      const updatedData = await updateCommunityProfile(communityId, user.id, data);
+
+      return updatedData;
+    } catch (error) {
+      console.log('Unable to update community profile', { error, name });
       switch (error.message) {
         case CommunityErrors.NotCommunityCreator:
           throw new GraphQLError(CommunityErrors.NotCommunityCreator);

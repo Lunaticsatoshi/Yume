@@ -7,6 +7,7 @@ import {
   CreateCommunityResponse,
   UpdateCommunityInput,
   GetCommunityDataResponse,
+  UpdateCommunityProfile,
 } from './community.interface';
 import { ErrorResponse } from '../../common/objects/error';
 import { createDataSource } from '../../common/utils/dataSource';
@@ -71,7 +72,10 @@ export const getCommunityByName = async (
     community.members.find((member) => member._id === user.id),
   );
 
-  if(community.communityType === CommunityType.PRIVATE && (!isUserMember || community.userId !== user.id)) {
+  if (
+    community.communityType === CommunityType.PRIVATE &&
+    (!isUserMember || community.userId !== user.id)
+  ) {
     throw new Error(AuthErrors.NotAuthorized);
   }
 
@@ -170,6 +174,33 @@ export const updateCommunity = async (
       ],
     };
   }
+
+  const communityToUpdate = await communityRepository.findOneOrFail({
+    where: { _id: communityId, creator: { _id: userId } },
+  });
+
+  if (!communityToUpdate) {
+    throw new Error(CommunityErrors.NotCommunityCreator);
+  }
+
+  await communityRepository.update({ _id: communityId }, { ...data });
+
+  const updatedCommunity = await communityRepository.findOneOrFail({
+    where: { _id: communityId },
+  });
+
+  return {
+    community: updatedCommunity,
+    errors: [],
+  };
+};
+
+export const updateCommunityProfile = async (
+  communityId: string,
+  userId: string,
+  data: UpdateCommunityProfile,
+): Promise<CreateCommunityResponse> => {
+  const communityRepository = await getCommunityRepository();
 
   const communityToUpdate = await communityRepository.findOneOrFail({
     where: { _id: communityId, creator: { _id: userId } },
