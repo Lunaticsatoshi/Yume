@@ -14,6 +14,7 @@ const UserMenu: React.FC<UserMenuProps> = () => {
   const logout = async () => {
     await signOut(auth);
     eventDispatcher('APP_LOGOUT', {});
+    location.reload();
   };
 
   return (

@@ -3,14 +3,14 @@ import { RedditLogo, Sparkle, CaretDown, User } from 'phosphor-react';
 import { Menu, MenuButton, MenuList } from '@chakra-ui/react';
 
 import { AuthModalContext } from 'src/contexts';
-import { User as CurrentUser } from 'src/generated/graphql';
+import { GetCurrentUserQuery } from 'src/generated/graphql';
 
 import NoUserMenu from './NoUserMenu';
 import UserMenu from './UserMenu';
 
 type ProfileMenuProps = {
   isAuthenticated: boolean;
-  user: Partial<CurrentUser>;
+  user: GetCurrentUserQuery['getCurrentUser'];
 };
 
 const ProfileMenu: React.FC<ProfileMenuProps> = ({ isAuthenticated, user }) => {

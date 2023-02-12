@@ -16,20 +16,20 @@ const Navbar: React.FC = () => {
   const router = useRouter();
   const { isAuthenticated, user } = useAuthState();
 
-//   const searchSubs = async () => {
-//     clearTimeout(timer);
-//     setTimer(
-//       setTimeout(async () => {
-//         try {
-//           const { data } = await Axios.get(`/subs/search/${name}`);
-//           setSubs(data);
-//           console.log(data);
-//         } catch (err) {
-//           console.log(err);
-//         }
-//       }, 250)
-//     );
-//   };
+  //   const searchSubs = async () => {
+  //     clearTimeout(timer);
+  //     setTimer(
+  //       setTimeout(async () => {
+  //         try {
+  //           const { data } = await Axios.get(`/subs/search/${name}`);
+  //           setSubs(data);
+  //           console.log(data);
+  //         } catch (err) {
+  //           console.log(err);
+  //         }
+  //       }, 250)
+  //     );
+  //   };
 
   return (
     <div className="sticky inset-x-0 top-0 z-10 flex items-center justify-between px-5 h-12 bg-white dark:text-white dark:bg-black-500">
@@ -37,22 +37,22 @@ const Navbar: React.FC = () => {
       <div className="flex items-center w-52">
         <Link href="/">
           <a>
-          <Image width="40px" src="/images/redditFace.svg" height="40px" />
+            <Image width="40px" src="/images/redditFace.svg" height="40px" />
           </a>
         </Link>
         <span className="hidden text-2xl font-semibold lg:block">
-        <Image
-          src="/images/redditText.svg"
-          width="70px"
-          height="46px"
-        />
+          <Image src="/images/redditText.svg" width="70px" height="46px" />
         </span>
       </div>
-      { isAuthenticated ? <Directory /> : null}
+      {isAuthenticated ? <Directory user={user} /> : null}
       {/* Search Input */}
       <SearchInput onChange={() => {}} />
       {/* Auth buttons */}
-      <NavbarRight loading={loading} isAuthenticated={isAuthenticated} user={user} />
+      <NavbarRight
+        loading={loading}
+        isAuthenticated={isAuthenticated}
+        user={user}
+      />
     </div>
   );
 };

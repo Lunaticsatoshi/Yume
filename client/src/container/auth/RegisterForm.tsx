@@ -3,13 +3,13 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithPopup,
-  signInWithEmailAndPassword,
+  signOut
 } from 'firebase/auth';
 
 import { auth } from 'src/utils/firebaseClient';
 
 import { GoogleOAuthButton, InputField } from 'src/components';
-import { AuthType, useCreateUserMutation } from 'src/generated/graphql';
+import { AuthType, useCreateUserMutation, GetCurrentUserDocument } from 'src/generated/graphql';
 
 // The type of props LoginForm receives
 interface RegisterFormProps {
@@ -44,10 +44,12 @@ const RegisterForm: FC<RegisterFormProps> = ({
             password,
             authType: AuthType.EmailAndPassword
           }
-        }
+        },
       });
 
-      await signInWithEmailAndPassword(auth, email, password);
+      await signOut(auth);
+      location.reload();
+
       onSubmit?.();
     } catch (err: any) {
       console.log(err);
@@ -71,6 +73,9 @@ const RegisterForm: FC<RegisterFormProps> = ({
           }
         }
       });
+
+      await signOut(auth);
+      location.reload();
 
       onSubmit?.();
     } catch (err: any) {

@@ -1,7 +1,10 @@
 import { FC, ReactNode, useEffect } from 'react';
 import Head from 'next/head';
 
-import { AuthModalContextProvider } from 'src/contexts';
+import {
+  AuthModalContextProvider,
+  DirectoryContextProvider,
+} from 'src/contexts';
 
 import Navbar from '../navigation/Navbar';
 
@@ -25,14 +28,16 @@ const Layout: FC<LayoutProps> = ({
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
       </Head>
-      <AuthModalContextProvider>
-        <div className="relative">
-          <Navbar />
-          <div className="main-content flex flex-col h-screen bg-gray-100 dark:bg-black-900">
-            {children}
+      <DirectoryContextProvider>
+        <AuthModalContextProvider>
+          <div className="relative">
+            <Navbar />
+            <div className="main-content flex flex-col h-screen bg-gray-100 dark:bg-black-900">
+              {children}
+            </div>
           </div>
-        </div>
-      </AuthModalContextProvider>
+        </AuthModalContextProvider>
+      </DirectoryContextProvider>
     </>
   );
 };
