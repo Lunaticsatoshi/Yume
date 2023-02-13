@@ -1,5 +1,3 @@
-import { IRequestContextUser } from './../../common/interfaces/RequestContext';
-import { CommunityErrors, AuthErrors } from './../../common/enums/errors.enum';
 import { isEmpty } from 'class-validator';
 
 import {
@@ -15,6 +13,8 @@ import { getUserRepository } from '../user/user.service';
 import { getMemberRepository } from '../member/member.service';
 import { Community, CommunityType } from '../../entities/CommunityModel';
 import { MemberType } from './../../entities/MemberModel';
+import { IRequestContextUser } from './../../common/interfaces/RequestContext';
+import { CommunityErrors, AuthErrors } from './../../common/enums/errors.enum';
 
 export const getCommunityRepository = async () => {
   const dataSource = await createDataSource();
@@ -60,7 +60,7 @@ export const getCommunityByName = async (
 
   const community = await communityRepository
     .createQueryBuilder('community')
-    .innerJoinAndSelect('community.members', 'member')
+    .leftJoinAndSelect('community.members', 'member')
     .where('name = :name', { name })
     .getOne();
 
