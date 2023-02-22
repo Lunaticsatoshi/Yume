@@ -1,7 +1,8 @@
 import type { NextPage } from 'next';
+import { withAuthUser } from 'next-firebase-auth';
 import { Layout } from 'src/components';
 
-const Home: NextPage = () => {
+const Home = () => {
   return (
     <Layout title="Reddit">
       <div className="w-full h-full">
@@ -11,4 +12,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default withAuthUser()(Home);

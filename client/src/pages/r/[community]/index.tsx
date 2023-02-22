@@ -1,27 +1,11 @@
-import { Fragment, useState } from 'react';
-import { useRouter } from 'next/router';
+import { Fragment } from 'react';
 
 import { Layout, PageContentLayout } from 'src/components';
 import CommunityHeader from 'src/container/Community/CommunityHeader';
-import Image from 'next/image';
-import classNames from 'src/utils/classnames';
+import CommunityRight from 'src/container/Community/CommunityRight';
+import CommunityLeft from 'src/container/Community/CommunityLeft';
 
 const CommunityPage = () => {
-  // Local state
-  const [ownCommunity, setOwnCommunity] = useState(false);
-  // Global state
-  //   const { authenticated, user } = useAuthState();
-  // Utils
-  const router = useRouter();
-
-  const subName = router.query.sub;
-  const community = {
-    name: '',
-    imageUrl: '',
-    bannerUrl: '',
-    title: '',
-  };
-
   //   useEffect(() => {
   //     if (!sub) return;
   //     setOwnSub(authenticated && user.username === sub.username);
@@ -43,11 +27,11 @@ const CommunityPage = () => {
   return (
     <Layout title="Reddit">
       <Fragment>
-          <CommunityHeader community={community} ownCommunity={ownCommunity} />
+        <CommunityHeader />
         {/* Posts & Sidebar */}
         <PageContentLayout>
-            <>Left Content</>
-            <>Right Content</>
+          <><CommunityLeft /></>
+          <><CommunityRight /></>
         </PageContentLayout>
       </Fragment>
     </Layout>
