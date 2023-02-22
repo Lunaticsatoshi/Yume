@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { MenuItem } from '@chakra-ui/react';
-import { CreateCommunityModal } from 'src/components';
-import DirectoryMenuListItem from './DirectoryMenuListItem';
 import { Plus } from 'phosphor-react';
+
+import { CreateCommunityModal } from 'src/components';
+import { GetCurrentUserQuery } from 'src/generated/graphql';
+import DirectoryMenuListItem from './DirectoryMenuListItem';
 
 type CommunitiesProps = {
   menuOpen: boolean;
+  user: GetCurrentUserQuery['getCurrentUser'];
 };
 
-const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
+const Communities: React.FC<CommunitiesProps> = ({ menuOpen, user }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -36,7 +39,10 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
         </div>
       )} */}
       <div className="mt-3 mb-4">
-        <div style={{ fontSize: '8pt' }} className="pl-2 mb-2 font-medium text-gray-500">
+        <div
+          style={{ fontSize: '8pt' }}
+          className="pl-4 mb-2 font-medium text-gray-500"
+        >
           MY COMMUNITIES
         </div>
         <MenuItem
@@ -50,16 +56,18 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
             Create Community
           </div>
         </MenuItem>
-        {/* {mySnippets.map((snippet) => (
-          <DirectoryMenuListItem
-            key={snippet.communityId}
-            icon={FaReddit}
-            displayText={`r/${snippet.communityId}`}
-            link={`/r/${snippet.communityId}`}
-            iconColor="blue.500"
-            imageURL={snippet.imageURL}
-          />
-        ))} */}
+        {user?.communities ? (
+          <>
+            {user.communities.map((community) => (
+              <DirectoryMenuListItem
+                key={community._id}
+                displayText={`r/${community.name}`}
+                link={`/r/${community.name}`}
+                imageURL={community.imageUrl || ''}
+              />
+            ))}
+          </>
+        ) : null}
       </div>
     </>
   );

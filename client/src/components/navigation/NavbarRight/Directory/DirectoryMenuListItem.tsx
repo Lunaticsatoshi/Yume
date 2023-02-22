@@ -1,40 +1,52 @@
 import React from 'react';
-import { MenuItem, Image } from '@chakra-ui/react';
-import { Plus } from 'phosphor-react';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
+import { MenuItem } from '@chakra-ui/react';
+
+import { DefaultSmallCircularAvatar } from 'src/components';
 
 type DirectoryItemProps = {
   displayText: string;
-  //   link: string;
-  //   icon: IconType;
-  //   iconColor: string;
+  link: string;
   imageURL?: string;
 };
 
 const DirectoryMenuListItem: React.FC<DirectoryItemProps> = ({
   displayText,
-  //   link,
-  //   icon,
-  //   iconColor,
+  link,
   imageURL,
 }) => {
-  //   const { onSelectMenuItem } = useDirectory();
+  const router = useRouter();
   return (
     <MenuItem
       width="100%"
       fontSize="10pt"
       _hover={{ bg: 'gray.100' }}
-      onClick={() => {}}
+      onClick={() => router.push(link)}
     >
       <div className="flex items-center">
-        {imageURL ? (
-          <Image borderRadius="full" boxSize="18px" src={imageURL} mr={2} />
-        ) : (
-          <Plus />
-          //   <Icon fontSize={20} mr={2} as={icon} color={iconColor} />
-        )}
-        {displayText}
+        <div className="mr-2">
+          {imageURL ? (
+            <div className="w-[20px] h-[20px] border-1 mt-1">
+              <Image
+                className="rounded-full mr-2"
+                width={20}
+                height={20}
+                objectFit="contain"
+                src={imageURL}
+              />
+            </div>
+          ) : (
+            <DefaultSmallCircularAvatar
+              className={'w-[20px] h-[20px] border-1'}
+              onClick={() => {}}
+            />
+          )}
+        </div>
+        <div>{displayText}</div>
       </div>
     </MenuItem>
   );
 };
+
 export default DirectoryMenuListItem;
