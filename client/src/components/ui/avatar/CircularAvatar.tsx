@@ -16,14 +16,17 @@ export const CircularAvatar: FC<ICircularAvatar> = ({
   className,
 }) => {
   return (
-    <Image
-      src={imageUrl}
-      alt="community"
-      className={className}
-      onClick={onClick}
-      width={70}
-      height={70}
-    />
+    <div className="rounded-full border-4 border-solid border-white">
+      <Image
+        src={imageUrl}
+        alt="community"
+        className={className}
+        onClick={onClick}
+        width={75}
+        height={75}
+        objectFit="contain"
+      />
+    </div>
   );
 };
 
@@ -34,12 +37,28 @@ export const DefaultCircularAvatar: FC<Omit<ICircularAvatar, 'imageUrl'>> = ({
   return (
     <div
       className={classNames(
-        'rounded-full flex justify-center items-center bg-blue-500 border-4 border-solid border-white',
+        'rounded-full flex justify-center items-center bg-blue-500 border-solid border-white',
         className,
       )}
       onClick={onClick}
     >
       <RedditLogo size={22} />
+    </div>
+  );
+};
+
+export const DefaultSmallCircularAvatar: FC<
+  Omit<ICircularAvatar, 'imageUrl'>
+> = ({ className, onClick }) => {
+  return (
+    <div
+      className={classNames(
+        'rounded-full flex justify-center items-center bg-blue-500 border-solid border-white',
+        className,
+      )}
+      onClick={onClick}
+    >
+      <RedditLogo size={12} />
     </div>
   );
 };
