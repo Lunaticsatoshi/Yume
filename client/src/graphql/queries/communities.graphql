@@ -1,0 +1,18 @@
+query GetCommunityByName($name: String!) {
+  getCommunityByName(name: $name) {
+    community {
+      _id
+      name
+      title
+      description
+      communityType
+      imageUrl
+      bannerUrl
+      userId
+      createdAt
+      updatedAt
+    }
+    memberCount
+    isMember
+  }
+}

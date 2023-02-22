@@ -1,0 +1,55 @@
+mutation CreateCommunity($data: CreateCommunityInput!) {
+  createCommunity(data: $data) {
+    community {
+      _id
+      name
+    }
+    errors {
+      field
+      statusCode
+      message
+    }
+  }
+}
+
+mutation UpdateCommunity($communityId: String!, $data: UpdateCommunityInput!) {
+  updateCommunity(communityId: $communityId, data: $data) {
+    _id
+    name
+    title
+    description
+    communityType
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateCommunityProfile(
+  $communityId: String!
+  $data: UpdateCommunityProfile!
+) {
+  updateCommunityProfile(communityId: $communityId, data: $data) {
+    _id
+    name
+    imageUrl
+    bannerUrl
+    createdAt
+    updatedAt
+  }
+}
+
+mutation JoinCommunity($communityId: String!) {
+  joinCommunity(communityId: $communityId) {
+    _id
+    name
+    imageUrl
+  }
+}
+
+mutation LeaveCommunity($communityId: String!) {
+  leaveCommunity(communityId: $communityId) {
+    _id
+    name
+    imageUrl
+  }
+}

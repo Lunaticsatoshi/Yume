@@ -6,5 +6,11 @@ query GetCurrentUser {
     authType
     profilePicUrn
     profileUrl
+    karma
+    communities {
+      _id
+      name
+      imageUrl
+    }
   }
 }
