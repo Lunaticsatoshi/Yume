@@ -13,6 +13,8 @@ import {
 import { useRouter } from 'next/router';
 import { Eye, LockSimple, User } from 'phosphor-react';
 
+import { useCreateCommunityMutation, CommunityType } from 'src/generated/graphql';
+
 import ModalWrapper from '../ModalWrapper';
 
 type CreateCommunityModalProps = {
@@ -28,9 +30,11 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const [name, setName] = useState('');
   const [charsRemaining, setCharsRemaining] = useState(21);
   const [nameError, setNameError] = useState('');
-  const [communityType, setCommunityType] = useState('public');
+  const [communityType, setCommunityType] = useState<CommunityType>(CommunityType.Public);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const [createCommunity] = useCreateCommunityMutation();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 21) return;
@@ -39,8 +43,20 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   };
 
   const handleCreateCommunity = () => {
+    const communityName = name.replace(/\s/g, '').toLowerCase();
+    createCommunity({
+      variables: {
+        data: {
+          name: communityName,
+          title: name,
+          communityType,
+        }
+      }
+    });
     handleClose();
-    router.push(`r/${name}`);
+    setTimeout(() => {
+      router.push(`r/${communityName}`);
+    }, 2000);
     setLoading(false);
   };
 
@@ -49,10 +65,10 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   ) => {
     const {
       // eslint-disable-next-line @typescript-eslint/no-shadow
-      target: { name },
+      target: { value },
     } = event;
-    if (name === communityType) return;
-    setCommunityType(name);
+    if (value === communityType) return;
+    setCommunityType(value as CommunityType);
   };
 
   return (
@@ -96,8 +112,8 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
             <Stack spacing={2} pt={1}>
               <Checkbox
                 colorScheme="blue"
-                name="public"
-                isChecked={communityType === 'public'}
+                value={CommunityType.Public}
+                isChecked={communityType === CommunityType.Public}
                 onChange={onCommunityTypeChange}
               >
                 <div className="flex items-center">
@@ -110,8 +126,8 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
               </Checkbox>
               <Checkbox
                 colorScheme="blue"
-                name="restricted"
-                isChecked={communityType === 'restricted'}
+                value={CommunityType.Restricted}
+                isChecked={communityType === CommunityType.Restricted}
                 onChange={onCommunityTypeChange}
               >
                 <div className="flex items-center">
@@ -125,8 +141,8 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
               </Checkbox>
               <Checkbox
                 colorScheme="blue"
-                name="private"
-                isChecked={communityType === 'private'}
+                value={CommunityType.Private}
+                isChecked={communityType === CommunityType.Private}
                 onChange={onCommunityTypeChange}
               >
                 <div className="flex items-center">
