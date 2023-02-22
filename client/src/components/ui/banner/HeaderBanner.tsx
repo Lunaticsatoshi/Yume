@@ -8,7 +8,7 @@ interface IHeaderBanner {
 const HeaderBanner: FC<IHeaderBanner> = ({ bannerUrl, className }) => {
   return (
     <div
-      className={classNames("h-full bg-blue-500", className)}
+      className={classNames("h-full bg-blue-400", className)}
       style={{
         backgroundImage: `url(${bannerUrl})`,
         backgroundRepeat: 'no-repeat',
