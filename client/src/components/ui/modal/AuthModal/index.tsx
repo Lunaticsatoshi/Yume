@@ -8,11 +8,13 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
+import { withAuthUser } from 'next-firebase-auth';
+
 import { AuthModalContext } from 'src/contexts';
 import ModalWrapper from '../ModalWrapper';
 import { LoginForm, RegisterForm } from 'src/container';
 
-type AuthModalProps = {};
+// type AuthModalProps = {};
 
 const getAuthModalBody = (view: string, toggleView: (view: string) => unknown, handleClose: () => void) => {
   switch (view) {
@@ -33,7 +35,7 @@ const getAuthModalBody = (view: string, toggleView: (view: string) => unknown, h
   }
 };
 
-const AuthModal: React.FC<AuthModalProps> = () => {
+const AuthModal = () => {
   const { state: modalState, dispatch: setModalState } =
     useContext(AuthModalContext);
   const handleClose = () => setModalState({ ...modalState, open: false });
@@ -99,4 +101,7 @@ const AuthModal: React.FC<AuthModalProps> = () => {
     </ModalWrapper>
   );
 };
-export default AuthModal;
+
+export default withAuthUser({
+  LoaderComponent: () => <>Loading...</>,
+})(AuthModal);
