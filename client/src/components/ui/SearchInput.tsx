@@ -7,8 +7,8 @@ type SearchInputProps = {
 
 const SearchInput: React.FC<SearchInputProps> = ({ onChange }) => {
   return (
-    <div className="max-w-full sm:w-full w-15">
-      <div className="relative px-4 py-1 rounded-3xl flex items-center outline-none focus:outline-none bg-gray-100 dark:bg-black-400 border border-transparent focus:border-transparent hover:border-blue-50">
+    <div className="max-w-full sm:w-full md:w-160 w-15">
+      <div className="relative px-4 rounded-3xl flex items-center outline-none focus:outline-none bg-gray-100 dark:bg-black-400 border border-transparent focus:border-transparent hover:border-blue-50">
         <MagnifyingGlass size={20} className="sm:m-2 sm:py-0 py-1 m-0" />
         <input
           type="text"
