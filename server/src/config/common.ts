@@ -2,7 +2,7 @@ import { __prod__ } from '../constants';
 import { getEnvVariable } from '../common/utils/env';
 
 export const config = {
-  appName: 'Reddit',
+  appName: 'YumeApp',
   database: {
     type: 'postgres',
     url: getEnvVariable('DATABASE_URL'),
@@ -13,4 +13,10 @@ export const config = {
     synchronize: !__prod__,
     logging: __prod__ ? ["query", "error"] : "all",
   },
+  supabase: {
+    url: getEnvVariable('SUPABASE_URL'),
+    serviceRoleKey: getEnvVariable('SUPABASE_SERVICE_ROLE_KEY'),
+    anonKey: getEnvVariable('SUPABASE_ANON_KEY'),
+    jwtSecret: getEnvVariable('SUPABASE_JWT_SECRET'),
+  }
 };
