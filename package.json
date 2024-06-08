@@ -24,5 +24,7 @@
     "lint-staged": "^15.2.5",
     "prettier": "^3.2.5"
   },
-  "dependencies": {}
+  "dependencies": {
+    "eslint": "^9.4.0"
+  }
 }
