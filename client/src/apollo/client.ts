@@ -1,14 +1,19 @@
 import {
-  ApolloClient,
+  // ApolloClient,
   ApolloLink,
   createHttpLink,
-  InMemoryCache,
+  // InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client';
 import merge from 'deepmerge';
 import isDeepEqual from 'fast-deep-equal/react';
 import { setContext } from '@apollo/client/link/context';
 import { getIdToken, getAuth, Auth, User } from 'firebase/auth';
+import {
+  InMemoryCache,
+  ApolloClient,
+  SSRMultipartLink,
+} from '@apollo/experimental-nextjs-app-support';
 
 export const APOLLO_STATE_PROP_NAME = '__STATE__';
 
@@ -36,20 +41,21 @@ const waitForAuthStateChange = (auth: Auth): Promise<User> => {
 };
 
 const authLink = setContext(async (_, { headers }) => {
-  let token = '';
-  const isPublicRoute = checkIfPublicRoute();
-  if (!isPublicRoute) {
-    const auth = getAuth();
-    if (!auth.currentUser) {
-      const user = await waitForAuthStateChange(auth);
-      token = await user.getIdToken();
-    } else {
-      token = await getIdToken(auth.currentUser);
-    }
-  } else {
-    // eslint-disable-next-line no-console
-    console.log('Not authorized to make api requests');
-  }
+  const token = '';
+  // const isPublicRoute = checkIfPublicRoute();
+  // if (!isPublicRoute) {
+  //   const auth = getAuth();
+  //   if (!auth.currentUser) {
+  //     const user = await waitForAuthStateChange(auth);
+  //     token = await user.getIdToken();
+  //   } else {
+  //     token = await getIdToken(auth.currentUser);
+  //   }
+  // } else {
+  //   // eslint-disable-next-line no-console
+  //   console.log('Not authorized to make api requests');
+  // }
+  await console.log("Auth link", token);
   return {
     headers: {
       ...headers,
@@ -70,9 +76,26 @@ const httpLink = createHttpLink({
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: isServer(),
-    link: ApolloLink.from([authLink, httpLink]),
+    link: isServer()
+      ? ApolloLink.from([
+          // in a SSR environment, if you use multipart features like
+          // @defer, you need to decide how to handle these.
+          // This strips all interfaces with a `@defer` directive from your queries.
+          new SSRMultipartLink({
+            stripDefer: true,
+          }),
+          authLink,
+          httpLink,
+        ])
+      : ApolloLink.from([authLink, httpLink]),
     cache: createCache(),
     connectToDevTools: process.env.NODE_ENV !== 'production',
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'cache-and-network',
+        errorPolicy: 'all',
+      }
+    }
   });
 }
 
