@@ -1,7 +1,7 @@
 import { hash } from 'argon2';
 import { validate } from 'class-validator';
 
-import { createFirebaseUser } from '../../common/utils/createFirebaseUser';
+import { createSupabaseUser } from '../../common/utils/createSupabaseUser';
 import { createDataSource } from '../../common/utils/dataSource';
 import { createErrorMapArray } from '../../common/utils/createErrorMap';
 import { AUTH_TYPE, User } from '../../entities/UserModel';
@@ -114,7 +114,7 @@ export const createUser = async ({
 
     const createdUser = await userRepository.save(user);
 
-    await createFirebaseUser(createdUser.email, createdUser._id);
+    await createSupabaseUser(createdUser.email, createdUser._id);
 
     return {
       errors: [],

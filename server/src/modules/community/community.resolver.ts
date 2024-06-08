@@ -17,7 +17,7 @@ import {
 } from './../../common/enums/errors.enum';
 import { RequestContext } from '../../common/interfaces/RequestContext';
 import { Community } from '../../entities/CommunityModel';
-import { isAuth, isStrictAuth } from '../../common/middleware/isAuth';
+import { isAuth } from '../../common/middleware/isAuth';
 import { SuccessResponse } from '../../common/objects/success';
 
 import {
@@ -81,7 +81,7 @@ export class CommunityResolver {
   }
 
   @Mutation(() => CreateCommunityResponse)
-  @UseMiddleware(isStrictAuth)
+  @UseMiddleware(isAuth)
   async createCommunity(
     @Arg('data') data: CreateCommunityInput,
     @Ctx() { user }: RequestContext,
@@ -98,7 +98,7 @@ export class CommunityResolver {
   }
 
   @Mutation(() => Community)
-  @UseMiddleware(isStrictAuth)
+  @UseMiddleware(isAuth)
   async updateCommunity(
     @Arg('communityId') communityId: string,
     @Arg('data') data: UpdateCommunityInput,
@@ -121,7 +121,7 @@ export class CommunityResolver {
   }
 
   @Mutation(() => Community)
-  @UseMiddleware(isStrictAuth)
+  @UseMiddleware(isAuth)
   async updateCommunityProfile(
     @Arg('communityId') communityId: string,
     @Arg('data') data: UpdateCommunityProfile,
@@ -144,7 +144,7 @@ export class CommunityResolver {
   }
 
   @Mutation(() => Community)
-  @UseMiddleware(isStrictAuth)
+  @UseMiddleware(isAuth)
   async joinCommunity(
     @Arg('communityId') communityId: string,
     @Ctx() { user }: RequestContext,
@@ -166,7 +166,7 @@ export class CommunityResolver {
   }
 
   @Mutation(() => Community)
-  @UseMiddleware(isStrictAuth)
+  @UseMiddleware(isAuth)
   async leaveCommunity(
     @Arg('communityId') communityId: string,
     @Ctx() { user }: RequestContext,
@@ -188,7 +188,7 @@ export class CommunityResolver {
   }
 
   @Mutation(() => SuccessResponse)
-  @UseMiddleware(isStrictAuth)
+  @UseMiddleware(isAuth)
   async deleteCommunity(
     @Arg('communityId') communityId: string,
     @Ctx() { user }: RequestContext,
